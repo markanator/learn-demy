@@ -12,7 +12,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { state, dispatch } = useAuth();
+  const { state } = useAuth();
   const { user } = state;
   const router = useRouter();
 
