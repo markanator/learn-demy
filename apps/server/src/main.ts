@@ -3,10 +3,19 @@
  * This is only a minimal backend to get started.
  */
 
-import * as express from 'express';
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import { config } from 'dotenv';
+config();
 
 const app = express();
+// MW
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'));
 
+// routes
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to server!' });
 });
