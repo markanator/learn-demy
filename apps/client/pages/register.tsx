@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { registerNewUser } from '../async/api/auth';
 import { SyncOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -65,6 +66,9 @@ const Register = () => {
             {!isLoading ? 'Submit' : <SyncOutlined />}
           </button>
         </form>
+        <p className="mt-4">
+          Already have an account? <Link href="/login">Login</Link>
+        </p>
       </div>
     </>
   );
