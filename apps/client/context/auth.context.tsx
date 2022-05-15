@@ -6,6 +6,7 @@ import {
   useEffect,
   useReducer,
 } from 'react';
+import { useRouter } from 'next/router';
 
 interface IAuthContext {
   user: {
@@ -55,7 +56,31 @@ const rootReducer = (state: AuthState, action: AuthAction) => {
 
 // context provider
 const AuthProvider = ({ children }) => {
+  const router = useRouter();
   const [state, dispatch] = useReducer(rootReducer, intialState);
+
+  axios.interceptors.response.use(
+    (res) => res,
+    (error) => {
+      const res = error.response;
+      if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
+        return new Promise((_, reject) => {
+          axios
+            .get('/auth/logout')
+            .then(() => {
+              console.log('/401 error > logout');
+              dispatch({ type: 'LOGOUT' });
+              router.push('/login');
+            })
+            .catch((err) => {
+              console.log('AXIOS INTERCEPTORS ERR', err);
+              reject(error);
+            });
+        });
+      }
+      return Promise.reject(error);
+    }
+  );
 
   useEffect(() => {
     const user = window?.localStorage.getItem('user');
