@@ -1,20 +1,16 @@
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { registerNewUser } from '../async/api/auth';
 import { SyncOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuth } from '../context/auth.context';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { registerNewUser } from '../async/api/auth';
+import useRerouteAuthUser from '../hooks/useRerouteAuthUser';
 
 const Register = () => {
+  useRerouteAuthUser();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const { state } = useAuth();
-  const { user } = state;
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +19,9 @@ const Register = () => {
       const { data } = await registerNewUser({ name, email, password });
       console.log(data);
       toast.success('Registered successfully!');
+      setName('');
+      setEmail('');
+      setPassword('');
     } catch (error) {
       toast.error(error?.response?.data);
       console.error(error?.response?.data);
@@ -31,16 +30,9 @@ const Register = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      router.push('/');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
   return (
     <>
-      <h1 className="jumbotron text-center bg-primary square">Register</h1>
+      <h1 className="jumbotron text-center bg-primary square py-4">Register</h1>
 
       <div className="container col-md-4 offset-md-4 pb-5">
         <form onSubmit={handleSubmit}>

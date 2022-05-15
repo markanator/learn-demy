@@ -16,6 +16,7 @@ export interface IUser {
   stripe_account_id?: string;
   stripe_seller?: Record<string, unknown>;
   stripeSession?: Record<string, unknown>;
+  passwordResetCode?: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -49,6 +50,10 @@ const userSchema = new Schema<IUser>(
     stripe_account_id: '',
     stripe_seller: {},
     stripeSession: {},
+    passwordResetCode: {
+      type: String,
+      default: '',
+    },
   },
   { timestamps: true }
 );

@@ -66,6 +66,7 @@ const TopNav = () => {
       ) : (
         <>
           <Menu.SubMenu
+            key="AUTH_SUBMENU"
             icon={<CoffeeOutlined />}
             title={user?.name}
             className="float-right"

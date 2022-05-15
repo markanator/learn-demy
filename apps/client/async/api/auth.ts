@@ -15,3 +15,15 @@ export const loginUser = async (data: { email: string; password: string }) => {
 export const logoutUser = async () => {
   return axios.get('/auth/logout');
 };
+
+export const forgotPassword = async (data: { email: string }) => {
+  return axios.post('/auth/forgot-password', data);
+};
+
+export const resetPassword = async (data: {
+  email: string;
+  code: string;
+  newPassword: string;
+}) => {
+  return axios.post('/auth/reset-password', data);
+};
