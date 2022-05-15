@@ -1,16 +1,27 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { registerNewUser } from '../async/api/auth';
+import { SyncOutlined } from '@ant-design/icons';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.table({ name, email, password });
-    const { data } = await registerNewUser({ name, email, password });
-    console.log(data);
+    try {
+      setIsLoading(true);
+      const { data } = await registerNewUser({ name, email, password });
+      console.log(data);
+      toast.success('Registered successfully!');
+    } catch (error) {
+      toast.error(error?.response?.data);
+      console.error(error?.response?.data);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,8 +57,12 @@ const Register = () => {
             required
           />
 
-          <button type="submit" className="btn btn-block btn-primary">
-            Submit
+          <button
+            type="submit"
+            disabled={!name || !email || !password || isLoading}
+            className="btn btn-block btn-primary"
+          >
+            {!isLoading ? 'Submit' : <SyncOutlined />}
           </button>
         </form>
       </div>
