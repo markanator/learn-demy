@@ -3,6 +3,13 @@ import User from '../models/User';
 import { hashPassword, comparePassword } from '../utils/auth.utils';
 import jwt from 'jsonwebtoken';
 import { __prod__ } from '../utils/env.utils';
+import SES from 'aws-sdk/clients/ses';
+const awsConfig: SES.ClientConfiguration = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+  apiVersion: process.env.AWS_API_VERSION,
+};
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -98,6 +105,49 @@ export const currentUser = async (req: ReqWithUser, res: Response) => {
     if (!user) {
       return res.status(404).send('User not found');
     }
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send('Error. Try again.');
+  }
+};
+
+export const sendTestEmail = async (req: Request, res: Response) => {
+  try {
+    console.log('send email using AWS SES');
+
+    const params: SES.SendEmailRequest = {
+      Source: process.env.SES_EMAIL_FROM,
+      Destination: {
+        ToAddresses: ['gladys.mohr66@ethereal.email'],
+      },
+      ReplyToAddresses: [process.env.SES_EMAIL_FROM],
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: `
+            <html>
+              <h1>Password Reset Link</h1>
+              <p>please use the following link to reset your password</p>
+            </html>
+            `,
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: 'Password Reset Link',
+        },
+      },
+    };
+
+    const sesclient = new SES(awsConfig);
+
+    const emailSent = await sesclient.sendEmail(params).promise();
+    const sentRes = await emailSent.$response.data;
+
+    console.log(sentRes);
 
     return res.status(200).json({ ok: true });
   } catch (err) {
