@@ -1,17 +1,14 @@
 import { AppProps } from 'next/app';
-import Head from 'next/head';
+import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/index.css';
+import TopNav from '../components/TopNav';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <Head>
-        <title>Welcome to client!</title>
-      </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
+      <TopNav />
+      <Component {...pageProps} />
     </>
   );
 }
