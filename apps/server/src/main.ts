@@ -13,7 +13,12 @@ config();
 
 const app = express();
 // MW
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CORS_ORIGIN,
+  })
+);
 app.use(express.json());
 app.use(morgan('dev'));
 
