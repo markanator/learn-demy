@@ -70,9 +70,14 @@ const TopNav = () => {
             title={user?.name}
             className="float-right"
           >
-            <Menu.Item key="logout" onClick={handleLogout}>
-              Logout
-            </Menu.Item>
+            <Menu.ItemGroup>
+              <Menu.Item key="dashboard">
+                <Link href="/user">Dasboard</Link>
+              </Menu.Item>
+              <Menu.Item key="logout" onClick={handleLogout}>
+                Logout
+              </Menu.Item>
+            </Menu.ItemGroup>
           </Menu.SubMenu>
         </>
       )}
