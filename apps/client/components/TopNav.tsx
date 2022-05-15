@@ -14,8 +14,7 @@ const TopNav = () => {
     if (typeof window !== 'undefined') {
       setCurrent(window.location.pathname);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window?.location?.pathname]);
+  }, []);
   return (
     <Menu mode="horizontal" selectedKeys={[current]}>
       <Menu.Item

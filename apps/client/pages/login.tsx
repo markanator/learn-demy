@@ -1,8 +1,10 @@
 import { SyncOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { loginUser } from '../async/api/auth';
+import { useAuth } from '../context/auth.context';
 
 // type Props = {};
 
@@ -10,6 +12,9 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const { state, dispatch } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +22,9 @@ const Login = () => {
       setIsLoading(true);
       const { data } = await loginUser({ email, password });
       console.log(data);
-      toast.success('Registered successfully!');
+      toast.success('Successfully logged in!');
+      dispatch({ type: 'LOGIN', payload: data });
+      router.push('/');
     } catch (error) {
       toast.error('An error occurred! Please try again.');
       console.error(error?.response?.data);
@@ -25,6 +32,13 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (state?.user) {
+      router.push('/');
+    }
+  }, [router, state?.user]);
+
   return (
     <div>
       <h1 className="jumbotron text-center bg-primary square">Login</h1>
