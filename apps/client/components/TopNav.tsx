@@ -5,7 +5,6 @@ import {
   AppstoreOutlined,
   CoffeeOutlined,
   LoginOutlined,
-  LogoutOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../context/auth.context';
@@ -71,7 +70,9 @@ const TopNav = () => {
             title={user?.name}
             className="float-right"
           >
-            <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+            <Menu.Item key="logout" onClick={handleLogout}>
+              Logout
+            </Menu.Item>
           </Menu.SubMenu>
         </>
       )}
