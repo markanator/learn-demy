@@ -9,6 +9,7 @@
   },
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@nrwl/next": "14.1.5",
     "antd": "^4.20.4",
     "bootstrap": "^5.1.3",
