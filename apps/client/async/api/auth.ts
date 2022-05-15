@@ -11,3 +11,7 @@ export const registerNewUser = async (data: {
 export const loginUser = async (data: { email: string; password: string }) => {
   return axios.post('/auth/login', data);
 };
+
+export const logoutUser = async () => {
+  return axios.get('/auth/logout');
+};

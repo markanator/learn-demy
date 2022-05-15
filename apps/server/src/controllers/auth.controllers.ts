@@ -79,3 +79,14 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).send('Error. Try again.');
   }
 };
+export const logout = async (req: Request, res: Response) => {
+  try {
+    // send token as cookie
+    res.clearCookie('token');
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send('Error. Try again.');
+  }
+};
