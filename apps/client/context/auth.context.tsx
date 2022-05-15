@@ -1,3 +1,4 @@
+import axios from '../async/axios';
 import {
   createContext,
   Dispatch,
@@ -63,6 +64,15 @@ const AuthProvider = ({ children }) => {
     } else {
       dispatch({ type: 'LOGOUT' });
     }
+  }, []);
+
+  useEffect(() => {
+    const getCSRF = async () => {
+      const { data } = await axios.get('/csrf-token');
+      console.log('CSRF', data);
+      axios.defaults.headers['X-CSRF-TOKEN'] = data.csrfToken;
+    };
+    getCSRF();
   }, []);
 
   return (

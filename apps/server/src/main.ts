@@ -9,8 +9,12 @@ import morgan from 'morgan';
 import { config } from 'dotenv';
 import AuthRoutes from './routes/auth';
 import mongoose from 'mongoose';
+import csrf from 'csurf';
+import cookieParser from 'cookie-parser';
+
 config();
 
+const csrfProtection = csrf({ cookie: true });
 const app = express();
 // MW
 app.use(
@@ -19,6 +23,7 @@ app.use(
     origin: process.env.CORS_ORIGIN,
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -31,6 +36,13 @@ mongoose
 // routes
 app.get('/', (_, res) => res.send('Server up!'));
 app.use('/auth', AuthRoutes);
+
+app.use(csrfProtection);
+app.get('/csrf-token', (req, res) =>
+  res.json({
+    csrfToken: req.csrfToken(),
+  })
+);
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {
