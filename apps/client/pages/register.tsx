@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { registerNewUser } from '../async/api/auth';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.table({ name, email, password });
+    // console.table({ name, email, password });
+    const { data } = await registerNewUser({ name, email, password });
+    console.log(data);
   };
 
   return (
