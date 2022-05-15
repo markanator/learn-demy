@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import {
   AppstoreOutlined,
+  CoffeeOutlined,
   LoginOutlined,
   LogoutOutlined,
   UserAddOutlined,
@@ -13,7 +14,8 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 
 const TopNav = () => {
-  const { dispatch } = useAuth();
+  const { dispatch, state } = useAuth();
+  const { user } = state;
   const [current, setCurrent] = useState('');
   const router = useRouter();
 
@@ -37,7 +39,7 @@ const TopNav = () => {
   };
 
   return (
-    <Menu mode="horizontal" selectedKeys={[current]}>
+    <Menu mode="horizontal" selectedKeys={[current]} className="">
       <Menu.Item
         key="/"
         onClick={(e) => setCurrent(e.key)}
@@ -45,27 +47,34 @@ const TopNav = () => {
       >
         <Link href="/">App</Link>
       </Menu.Item>
-      <Menu.Item
-        key="/login"
-        onClick={(e) => setCurrent(e.key)}
-        icon={<LoginOutlined />}
-      >
-        <Link href="/login">Login</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="/register"
-        onClick={(e) => setCurrent(e.key)}
-        icon={<UserAddOutlined />}
-      >
-        <Link href="/register">Register</Link>
-      </Menu.Item>
-      <Menu.Item
-        className="float-end"
-        icon={<LogoutOutlined />}
-        onClick={handleLogout}
-      >
-        <>Logout</>
-      </Menu.Item>
+      {user === null ? (
+        <>
+          <Menu.Item
+            key="/login"
+            onClick={(e) => setCurrent(e.key)}
+            icon={<LoginOutlined />}
+          >
+            <Link href="/login">Login</Link>
+          </Menu.Item>
+          <Menu.Item
+            key="/register"
+            onClick={(e) => setCurrent(e.key)}
+            icon={<UserAddOutlined />}
+          >
+            <Link href="/register">Register</Link>
+          </Menu.Item>
+        </>
+      ) : (
+        <>
+          <Menu.SubMenu
+            icon={<CoffeeOutlined />}
+            title={user?.name}
+            className="float-right"
+          >
+            <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+          </Menu.SubMenu>
+        </>
+      )}
     </Menu>
   );
 };

@@ -1,14 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { registerNewUser } from '../async/api/auth';
 import { SyncOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useAuth } from '../context/auth.context';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const { state, dispatch } = useAuth();
+  const { user } = state;
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +30,13 @@ const Register = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <>

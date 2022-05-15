@@ -15,6 +15,7 @@ const Login = () => {
   const router = useRouter();
 
   const { state, dispatch } = useAuth();
+  const { user } = state;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,10 +35,11 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (state?.user) {
+    if (user) {
       router.push('/');
     }
-  }, [router, state?.user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <div>
