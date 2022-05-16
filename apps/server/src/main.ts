@@ -7,10 +7,12 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { config } from 'dotenv';
-import AuthRoutes from './routes/auth';
 import mongoose from 'mongoose';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
+// LOCAL IMPORTS
+import AuthRoutes from './routes/auth';
+import InstructorRoutes from './routes/Instructor.routes';
 
 config();
 
@@ -36,6 +38,7 @@ mongoose
 // routes
 app.get('/', (_, res) => res.send('Server up!'));
 app.use('/auth', AuthRoutes);
+app.use('/instructors', InstructorRoutes);
 
 app.use(csrfProtection);
 app.get('/csrf-token', (req, res) =>

@@ -1,12 +1,12 @@
-import React from 'react';
-import { Button } from 'antd';
-import axios from '../../async/axios';
-import { toast } from 'react-toastify';
 import {
   LoadingOutlined,
   SettingOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
+import { Button } from 'antd';
+import React from 'react';
+import { toast } from 'react-toastify';
+import { applyForInstructor } from '../../async/api/instructors';
 import ProtectedUserPage from '../../components/ProtectedPages/UserRotues';
 import { useAuth } from '../../context/auth.context';
 
@@ -18,15 +18,16 @@ const ApplyForInstructor = () => {
 
   const handleApply = () => {
     setLoading(true);
-    axios
-      .post('/auth/instructor/apply')
+    applyForInstructor()
       .then(({ data }) => {
         console.log(data);
-        // window.location.href = data?.url;
+        window.location.href = data?.url;
       })
       .catch((err) => {
         console.log(err.response.status);
         toast.error('Stripe onboarding failed. Try again.');
+      })
+      .finally(() => {
         setLoading(false);
       });
   };

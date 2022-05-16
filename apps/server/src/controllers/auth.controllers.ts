@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { __prod__ } from '../utils/env.utils';
 import SES from 'aws-sdk/clients/ses';
 import { nanoid } from 'nanoid';
+import type { ReqWithUser } from '../app/types';
 
 const awsConfig: SES.ClientConfiguration = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -100,7 +101,6 @@ export const logout = async (req: Request, res: Response) => {
   }
 };
 
-type ReqWithUser = Request & { auth: { _id: string } };
 export const currentUser = async (req: ReqWithUser, res: Response) => {
   try {
     const user = await User.findById(req?.auth._id).select('-password').exec();
