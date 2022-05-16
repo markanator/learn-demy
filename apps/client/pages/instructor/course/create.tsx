@@ -1,10 +1,11 @@
+import { ProtectedInstructorPage } from '../../../components/ProtectedPages/InstructorRoutes';
 import React from 'react';
 
 const CreateCorusePage = () => {
   return (
-    <div>
+    <ProtectedInstructorPage>
       <h1>Create Course Page</h1>
-    </div>
+    </ProtectedInstructorPage>
   );
 };
 

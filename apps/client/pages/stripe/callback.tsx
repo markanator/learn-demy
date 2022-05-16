@@ -3,6 +3,7 @@ import { useAuth } from '../../context/auth.context';
 import { SyncOutlined } from '@ant-design/icons';
 import { getAccountStatus } from '../../async/api/instructors';
 import { useRouter } from 'next/router';
+import ProtectedUserPage from '../../components/ProtectedPages/UserRotues';
 
 const StripeCallbackPage = () => {
   const router = useRouter();
@@ -13,6 +14,7 @@ const StripeCallbackPage = () => {
 
   useEffect(() => {
     if (!user) {
+      router.push('/login');
       return;
     }
     getAccountStatus()
@@ -29,12 +31,14 @@ const StripeCallbackPage = () => {
       });
   }, [user, dispatch, router]);
   return (
-    <div
-      className="d-flex w-100 justify-content-center align-items-center"
-      style={{ height: '50vh' }}
-    >
-      <SyncOutlined spin className="text-primary fs-1" />
-    </div>
+    <ProtectedUserPage>
+      <div
+        className="d-flex w-100 justify-content-center align-items-center"
+        style={{ height: '50vh' }}
+      >
+        <SyncOutlined spin className="text-primary fs-1" />
+      </div>
+    </ProtectedUserPage>
   );
 };
 

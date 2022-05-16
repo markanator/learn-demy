@@ -3,7 +3,7 @@ import {
   SettingOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button } from 'react-bootstrap';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { applyForInstructor } from '../../async/api/instructors';
@@ -50,11 +50,6 @@ const ApplyForInstructor = () => {
               </p>
               <Button
                 className="mb-3"
-                type="primary"
-                block
-                shape="round"
-                icon={loading ? <LoadingOutlined /> : <SettingOutlined />}
-                size="large"
                 onClick={handleApply}
                 disabled={
                   (user && user.role && user.role.includes('Instructor')) ||

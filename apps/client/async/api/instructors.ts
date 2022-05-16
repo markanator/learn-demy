@@ -7,3 +7,7 @@ export const applyForInstructor = () => {
 export const getAccountStatus = async () => {
   return axios.get('/instructors/account-status');
 };
+
+export const getCurrentInstructors = async () => {
+  return axios.get('/instructors/current-instructor');
+};

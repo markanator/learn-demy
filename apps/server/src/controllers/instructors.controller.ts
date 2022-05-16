@@ -85,3 +85,18 @@ export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
     res.status(400).send('An error occured');
   }
 };
+
+export const currentInstructor = async (req: ReqWithUser, res: Response) => {
+  try {
+    const user = await User.findById(req.auth._id).select('-password').exec();
+    if (!user) {
+      return res.status(404).send('User not found');
+    } else if (!user?.role.includes('Instructor')) {
+      return res.status(403).send('Not Authorized.');
+    }
+    res.status(200).json({ ok: true });
+  } catch (error) {
+    console.log(error?.message);
+    res.status(400).send('An error occured');
+  }
+};

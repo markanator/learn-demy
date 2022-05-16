@@ -1,31 +1,21 @@
-import { Menu } from 'antd';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-import {
-  AppstoreOutlined,
-  CarryOutOutlined,
-  CoffeeOutlined,
-  LoginOutlined,
-  TeamOutlined,
-  UserAddOutlined,
-} from '@ant-design/icons';
-import { useAuth } from '../context/auth.context';
-import { logoutUser } from '../async/api/auth';
 import { useRouter } from 'next/router';
+import React from 'react';
+import {
+  Container,
+  Nav,
+  Navbar,
+  NavDropdown,
+  Offcanvas,
+} from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import { logoutUser } from '../async/api/auth';
+import { useAuth } from '../context/auth.context';
 
 const TopNav = () => {
   const { dispatch, state } = useAuth();
   const { user } = state;
-  const [current, setCurrent] = useState('');
   const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCurrent(window.location.pathname);
-    }
-  }, []);
-
   const handleLogout = async () => {
     try {
       const { data } = await logoutUser();
@@ -38,74 +28,69 @@ const TopNav = () => {
       console.error(error?.response?.data?.message);
     }
   };
-
   return (
-    <Menu mode="horizontal" selectedKeys={[current]} className="">
-      <Menu.Item
-        key="/"
-        onClick={(e) => setCurrent(e.key)}
-        icon={<AppstoreOutlined />}
-      >
-        <Link href="/">App</Link>
-      </Menu.Item>
-
-      {user && user?.role && user?.role?.includes('Instructor') ? (
-        <Menu.Item
-          key="/instructor/course/create"
-          onClick={(e) => setCurrent(e.key)}
-          icon={<CarryOutOutlined />}
+    <Navbar bg="light" expand="lg">
+      <Container fluid>
+        <Link href="/" passHref>
+          <Navbar.Brand>Learnwind</Navbar.Brand>
+        </Link>
+        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-lg`} />
+        <Navbar.Offcanvas
+          id={`offcanvasNavbar-expand-lg`}
+          aria-labelledby={`offcanvasNavbarLabel-expand-lg`}
+          placement="end"
         >
-          <Link href="/instructor/course/create">Create Course</Link>
-        </Menu.Item>
-      ) : (
-        user?.role?.includes('Subscriber') && (
-          <Menu.Item
-            key="/user/apply"
-            onClick={(e) => setCurrent(e.key)}
-            icon={<TeamOutlined />}
-          >
-            <Link href="/user/apply">Instructor Signup</Link>
-          </Menu.Item>
-        )
-      )}
-
-      {user === null ? (
-        <>
-          <Menu.Item
-            key="/login"
-            onClick={(e) => setCurrent(e.key)}
-            icon={<LoginOutlined />}
-          >
-            <Link href="/login">Login</Link>
-          </Menu.Item>
-          <Menu.Item
-            key="/register"
-            onClick={(e) => setCurrent(e.key)}
-            icon={<UserAddOutlined />}
-          >
-            <Link href="/register">Register</Link>
-          </Menu.Item>
-        </>
-      ) : (
-        <>
-          <Menu.SubMenu
-            key="/user"
-            icon={<CoffeeOutlined />}
-            title={user?.name}
-            className="float-right"
-          >
-            <Menu.ItemGroup>
-              <Menu.Item key="/user">
-                <Link href="/user">Dasboard</Link>
-              </Menu.Item>
-              <Menu.Item key="logout" onClick={handleLogout}>
-                Logout
-              </Menu.Item>
-            </Menu.ItemGroup>
-          </Menu.SubMenu>
-        </>
-      )}
-    </Menu>
+          <Offcanvas.Header closeButton>
+            <Offcanvas.Title id={`offcanvasNavbarLabel-expand-lg`}>
+              Learnwind
+            </Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body>
+            <Nav className="justify-content-end flex-grow-1 pe-3">
+              <>
+                {user && user?.role && user?.role?.includes('Instructor') ? (
+                  <Link href="/instructor/course/create" passHref>
+                    <Nav.Link>Create a Course</Nav.Link>
+                  </Link>
+                ) : (
+                  user?.role?.includes('Subscriber') && (
+                    <Link href="/user/apply" passHref>
+                      <Nav.Link>Instructor Signup</Nav.Link>
+                    </Link>
+                  )
+                )}
+              </>
+              {user === null ? (
+                <>
+                  <Link href="/login" passHref>
+                    <Nav.Link>Login</Nav.Link>
+                  </Link>
+                  <Link href="/register" passHref>
+                    <Nav.Link>Register</Nav.Link>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <NavDropdown
+                    title={user?.name + ' '}
+                    className="me-4"
+                    placement="bottom-end"
+                  >
+                    <Link href="/user" passHref>
+                      <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                    </Link>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href="/" onClick={handleLogout}>
+                      Logout
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </>
+              )}
+            </Nav>
+          </Offcanvas.Body>
+        </Navbar.Offcanvas>
+      </Container>
+    </Navbar>
   );
 };
 

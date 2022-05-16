@@ -27,3 +27,7 @@ export const resetPassword = async (data: {
 }) => {
   return axios.post('/auth/reset-password', data);
 };
+
+export const getCurrentUser = async () => {
+  return axios.get('/auth/me');
+};

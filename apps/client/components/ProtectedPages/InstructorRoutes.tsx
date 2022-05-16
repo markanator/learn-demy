@@ -1,22 +1,26 @@
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { getCurrentUser } from '../../async/api/auth';
-import Sidebar from '../UserNav/Sidebar';
+import { getCurrentInstructors } from '../../async/api/instructors';
+import InstructorSidebar from '../UserNav/InstructorNav';
+import { Container } from 'react-bootstrap';
 
 type Props = {
   showSidebar?: boolean;
   children: React.ReactNode;
 };
 
-const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
+export const ProtectedInstructorPage = ({
+  showSidebar = true,
+  children,
+}: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const { data } = await getCurrentUser();
+        const { data } = await getCurrentInstructors();
         if (data.ok) {
           setIsLoading(false);
         }
@@ -35,11 +39,11 @@ const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
   }
 
   return (
-    <div className="container-fluid">
+    <Container fluid>
       <div className="row">
         {showSidebar && (
           <div className="col-md-2 px-0">
-            <Sidebar />
+            <InstructorSidebar />
           </div>
         )}
         <div
@@ -51,8 +55,6 @@ const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
           <>{children}</>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
-
-export default ProtectedUserPage;

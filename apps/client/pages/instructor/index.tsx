@@ -1,9 +1,14 @@
+import { ProtectedInstructorPage } from '../../components/ProtectedPages/InstructorRoutes';
 import React from 'react';
 
 // type Props = {};
 
 const InstructorHomePage = () => {
-  return <div>InstructorHomePage</div>;
+  return (
+    <ProtectedInstructorPage>
+      <h1>Instructor Home Page</h1>
+    </ProtectedInstructorPage>
+  );
 };
 
 export default InstructorHomePage;
