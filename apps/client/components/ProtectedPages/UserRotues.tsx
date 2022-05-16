@@ -35,17 +35,17 @@ const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
   }
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid ps-0">
       <div className="row">
         {showSidebar && (
-          <div className="col-md-2 px-0">
+          <div className="col-md-2">
             <Sidebar />
           </div>
         )}
         <div
           className={classNames({
             'col-md-10': showSidebar,
-            'col px-0': !showSidebar,
+            col: !showSidebar,
           })}
         >
           <>{children}</>
