@@ -1,6 +1,7 @@
 import axios from '../../async/axios';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Sidebar from '../UserNav/Sidebar';
 
 type Props = {
   children: React.ReactNode;
@@ -31,7 +32,18 @@ const ProtectedUserPage = ({ children }: Props) => {
     return <div>Loading...</div>;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-md-2">
+          <Sidebar />
+        </div>
+        <div className="col-md-10">
+          <>{children}</>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ProtectedUserPage;

@@ -25,7 +25,7 @@ const Login = () => {
       console.log(data);
       toast.success('Successfully logged in!');
       dispatch({ type: 'LOGIN', payload: data });
-      router.push('/');
+      router.push('/user');
     } catch (error) {
       toast.error('An error occurred! Please try again.');
       console.error(error?.response?.data);
