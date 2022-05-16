@@ -48,26 +48,43 @@ const TopNav = () => {
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <>
-                {user && user?.role && user?.role?.includes('Instructor') ? (
-                  <Link href="/instructor/course/create" passHref>
-                    <Nav.Link>Create a Course</Nav.Link>
-                  </Link>
-                ) : (
-                  user?.role?.includes('Subscriber') && (
-                    <Link href="/user/apply" passHref>
-                      <Nav.Link>Instructor Signup</Nav.Link>
-                    </Link>
-                  )
-                )}
+                {user && user?.role
+                  ? user?.role?.includes('Instructor') && (
+                      <Nav.Item>
+                        <Link href="/instructor/course/create" passHref>
+                          <Nav.Link>Create a Course</Nav.Link>
+                        </Link>
+                      </Nav.Item>
+                    )
+                  : user?.role?.includes('Subscriber') && (
+                      <Nav.Item>
+                        <Link href="/user/apply" passHref>
+                          <Nav.Link>Instructor Signup</Nav.Link>
+                        </Link>
+                      </Nav.Item>
+                    )}
               </>
+
+              {user?.role && user?.role?.includes('Instructor') && (
+                <Nav.Item>
+                  <Link href="/instructor" passHref>
+                    <Nav.Link>Instructors</Nav.Link>
+                  </Link>
+                </Nav.Item>
+              )}
+
               {user === null ? (
                 <>
-                  <Link href="/login" passHref>
-                    <Nav.Link>Login</Nav.Link>
-                  </Link>
-                  <Link href="/register" passHref>
-                    <Nav.Link>Register</Nav.Link>
-                  </Link>
+                  <Nav.Item>
+                    <Link href="/login" passHref>
+                      <Nav.Link>Login</Nav.Link>
+                    </Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Link href="/register" passHref>
+                      <Nav.Link>Register</Nav.Link>
+                    </Link>
+                  </Nav.Item>
                 </>
               ) : (
                 <>

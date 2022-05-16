@@ -1,10 +1,6 @@
-import {
-  LoadingOutlined,
-  SettingOutlined,
-  UserSwitchOutlined,
-} from '@ant-design/icons';
-import { Button } from 'react-bootstrap';
+import { UserSwitchOutlined } from '@ant-design/icons';
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { applyForInstructor } from '../../async/api/instructors';
 import ProtectedUserPage from '../../components/ProtectedPages/UserRotues';
