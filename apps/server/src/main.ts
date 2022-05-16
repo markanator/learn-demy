@@ -13,6 +13,7 @@ import cookieParser from 'cookie-parser';
 // LOCAL IMPORTS
 import AuthRoutes from './routes/auth.routes';
 import InstructorRoutes from './routes/Instructor.routes';
+import CourseRoutes from './routes/course.routes';
 
 config();
 
@@ -26,7 +27,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 app.use(morgan('dev'));
 
 // MONGOOSE
@@ -39,6 +40,7 @@ mongoose
 app.get('/', (_, res) => res.send('Server up!'));
 app.use('/auth', AuthRoutes);
 app.use('/instructors', InstructorRoutes);
+app.use('/courses', CourseRoutes);
 
 app.use(csrfProtection);
 app.get('/csrf-token', (req, res) =>
