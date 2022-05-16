@@ -12,21 +12,22 @@ const StripeCallbackPage = () => {
   } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      getAccountStatus()
-        .then(({ data }) => {
-          console.log('ACCOUNT STATUS', data);
-          dispatch({
-            type: 'LOGIN',
-            payload: data,
-          });
-          router.push('/instructor');
-        })
-        .catch((err) => {
-          console.warn('ERROR', err?.message);
-        });
+    if (!user) {
+      return;
     }
-  }, [user]);
+    getAccountStatus()
+      .then(({ data }) => {
+        console.log('ACCOUNT STATUS', data);
+        dispatch({
+          type: 'LOGIN',
+          payload: data,
+        });
+        router.push('/instructor');
+      })
+      .catch((err) => {
+        console.warn('ERROR', err?.message);
+      });
+  }, [user, dispatch, router]);
   return (
     <div
       className="d-flex w-100 justify-content-center align-items-center"

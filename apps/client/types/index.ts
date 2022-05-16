@@ -28,38 +28,38 @@ export interface StripeSeller {
     url: string;
   };
   future_requirements: {
-    alternatives: any[];
-    current_deadline?: any;
-    currently_due: any[];
-    disabled_reason?: any;
-    errors: any[];
-    eventually_due: any[];
-    past_due: any[];
-    pending_verification: any[];
+    alternatives: unknown[];
+    current_deadline?: unknown;
+    currently_due: unknown[];
+    disabled_reason?: unknown;
+    errors: unknown[];
+    eventually_due: unknown[];
+    past_due: unknown[];
+    pending_verification: unknown[];
   };
   login_links: {
     object: string;
-    data: any[];
+    data: unknown[];
     has_more: boolean;
     total_count: number;
     url: string;
   };
   payouts_enabled: boolean;
   requirements: {
-    alternatives: any[];
+    alternatives: unknown[];
     current_deadline: number;
     currently_due: string[];
-    disabled_reason?: any;
+    disabled_reason?: unknown;
     errors: {
       code: string;
       reason: string;
       requirement: string;
     }[];
     eventually_due: string[];
-    past_due: any[];
-    pending_verification: any[];
+    past_due: unknown[];
+    pending_verification: unknown[];
   };
-  settings: any;
+  settings: unknown;
   tos_acceptance: {
     date?: number;
   };
