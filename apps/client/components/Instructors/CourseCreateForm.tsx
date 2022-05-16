@@ -12,13 +12,14 @@ type Props = {
     loading: boolean;
     category: string;
   };
-  imgPreview?: string;
   handleChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => void;
   handleImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  imgPreview?: string;
+  uploadButtonText?: string;
 };
 
 const CourseCreateForm = ({
@@ -27,6 +28,7 @@ const CourseCreateForm = ({
   handleChange,
   handleImage,
   imgPreview,
+  uploadButtonText,
 }: Props) => {
   return (
     <Form onSubmit={handleSubmit} className="form">
@@ -105,7 +107,7 @@ const CourseCreateForm = ({
         <Col>
           <Form.Group className="mb-3">
             <Form.Label className="btn btn-outline-secondary btn-block text-left">
-              {values.loading ? 'Uploading' : 'Image Upload'}
+              <span>{uploadButtonText}</span>
               <Form.Control
                 type="file"
                 name="image"
