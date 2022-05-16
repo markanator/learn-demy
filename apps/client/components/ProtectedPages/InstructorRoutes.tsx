@@ -39,10 +39,10 @@ export const ProtectedInstructorPage = ({
   }
 
   return (
-    <Container fluid className="ps-0">
+    <Container fluid className="">
       <div className="row">
         {showSidebar && (
-          <div className="col-md-2">
+          <div className="col-md-2 px-0">
             <InstructorSidebar />
           </div>
         )}
