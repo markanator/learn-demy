@@ -2,12 +2,14 @@ import axios from '../../async/axios';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Sidebar from '../UserNav/Sidebar';
+import classNames from 'classnames';
 
 type Props = {
+  showSidebar?: boolean;
   children: React.ReactNode;
 };
 
-const ProtectedUserPage = ({ children }: Props) => {
+const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -35,10 +37,17 @@ const ProtectedUserPage = ({ children }: Props) => {
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-md-2">
-          <Sidebar />
-        </div>
-        <div className="col-md-10">
+        {showSidebar && (
+          <div className="col-md-2">
+            <Sidebar />
+          </div>
+        )}
+        <div
+          className={classNames({
+            'col-md-10': showSidebar,
+            col: !showSidebar,
+          })}
+        >
           <>{children}</>
         </div>
       </div>

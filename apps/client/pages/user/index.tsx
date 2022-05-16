@@ -1,6 +1,5 @@
-import ProtectedUserPage from '../../components/ProtectedPages/UserRotues';
 import React from 'react';
-import Sidebar from '../../components/UserNav/Sidebar';
+import ProtectedUserPage from '../../components/ProtectedPages/UserRotues';
 
 // type Props = {}
 

@@ -3,8 +3,10 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import {
   AppstoreOutlined,
+  CarryOutOutlined,
   CoffeeOutlined,
   LoginOutlined,
+  TeamOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../context/auth.context';
@@ -46,6 +48,27 @@ const TopNav = () => {
       >
         <Link href="/">App</Link>
       </Menu.Item>
+
+      {user && user?.role && user?.role?.includes('Instructor') ? (
+        <Menu.Item
+          key="/instructor/course/create"
+          onClick={(e) => setCurrent(e.key)}
+          icon={<CarryOutOutlined />}
+        >
+          <Link href="/instructor/course/create">Create Course</Link>
+        </Menu.Item>
+      ) : (
+        user?.role?.includes('Subscriber') && (
+          <Menu.Item
+            key="/user/apply"
+            onClick={(e) => setCurrent(e.key)}
+            icon={<TeamOutlined />}
+          >
+            <Link href="/user/apply">Instructor Signup</Link>
+          </Menu.Item>
+        )
+      )}
+
       {user === null ? (
         <>
           <Menu.Item
@@ -66,13 +89,13 @@ const TopNav = () => {
       ) : (
         <>
           <Menu.SubMenu
-            key="AUTH_SUBMENU"
+            key="/user"
             icon={<CoffeeOutlined />}
             title={user?.name}
             className="float-right"
           >
             <Menu.ItemGroup>
-              <Menu.Item key="dashboard">
+              <Menu.Item key="/user">
                 <Link href="/user">Dasboard</Link>
               </Menu.Item>
               <Menu.Item key="logout" onClick={handleLogout}>
