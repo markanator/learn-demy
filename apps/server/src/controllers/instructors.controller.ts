@@ -48,3 +48,40 @@ export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
     res.status(400).send('An error occured');
   }
 };
+
+export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
+  try {
+    // find user
+    const user = await User.findById(req.auth._id).exec();
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    const stripeAccount = await stripe.accounts.retrieve(
+      user.stripe_account_id
+    );
+
+    if (!stripeAccount.charges_enabled) {
+      return res.status(401).send('Not authorized');
+    }
+
+    const sellerUpdatedUser = await User.findByIdAndUpdate(
+      user.id,
+      {
+        stripe_seller: stripeAccount,
+        $addToSet: {
+          role: 'Instructor',
+        },
+      },
+      { new: true }
+    )
+      .select('-password -passwordResetCode')
+      .exec();
+    // sellerUpdatedUser.password = undefined;
+    console.log({ dbSeller: sellerUpdatedUser.stripe_seller });
+
+    res.status(200).json(sellerUpdatedUser);
+  } catch (error) {
+    console.log(error?.message);
+    res.status(400).send('An error occured');
+  }
+};

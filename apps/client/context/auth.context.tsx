@@ -7,6 +7,7 @@ import {
   useReducer,
 } from 'react';
 import { useRouter } from 'next/router';
+import { StripeSeller, UserRole } from '../types';
 
 interface IAuthContext {
   user: {
@@ -14,8 +15,11 @@ interface IAuthContext {
     email: string;
     name: string;
     picture?: string;
-    role: string[];
+    role: UserRole[];
     createdAt: Date;
+    // SELLER STUFF
+    stripe_account_id?: string;
+    stripe_seller?: StripeSeller;
   };
 }
 

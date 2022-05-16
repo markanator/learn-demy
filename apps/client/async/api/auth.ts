@@ -27,7 +27,3 @@ export const resetPassword = async (data: {
 }) => {
   return axios.post('/auth/reset-password', data);
 };
-
-export const getAccountStatus = async () => {
-  return axios.get('/auth/account-status');
-};

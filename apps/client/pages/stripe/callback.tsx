@@ -1,14 +1,14 @@
-import ProtectedUserPage from '../../components/ProtectedPages/UserRotues';
 import React, { useEffect } from 'react';
 import { useAuth } from '../../context/auth.context';
 import { SyncOutlined } from '@ant-design/icons';
-import { getAccountStatus } from '../../async/api/auth';
+import { getAccountStatus } from '../../async/api/instructors';
+import { useRouter } from 'next/router';
 
-// type Props = {}
-
-const StripeCallbackPage = (props) => {
+const StripeCallbackPage = () => {
+  const router = useRouter();
   const {
     state: { user },
+    dispatch,
   } = useAuth();
 
   useEffect(() => {
@@ -16,7 +16,11 @@ const StripeCallbackPage = (props) => {
       getAccountStatus()
         .then(({ data }) => {
           console.log('ACCOUNT STATUS', data);
-          window.location.href = '/isntructor';
+          dispatch({
+            type: 'LOGIN',
+            payload: data,
+          });
+          router.push('/instructor');
         })
         .catch((err) => {
           console.warn('ERROR', err?.message);

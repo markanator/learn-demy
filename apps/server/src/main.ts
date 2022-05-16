@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
 // LOCAL IMPORTS
-import AuthRoutes from './routes/auth';
+import AuthRoutes from './routes/auth.routes';
 import InstructorRoutes from './routes/Instructor.routes';
 
 config();
