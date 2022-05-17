@@ -110,3 +110,22 @@ export const createCourse = async (req: ReqWithUser, res: Response) => {
     return res.status(500).send('Error. Try again.');
   }
 };
+
+export const getCourseBySlug = async (req: ReqWithUser, res: Response) => {
+  try {
+    const course = await Course.findOne({
+      slug: req.params.slug,
+    })
+      .populate('instructor', '_id name')
+      .exec();
+
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
+
+    return res.status(200).json(course);
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
+  }
+};

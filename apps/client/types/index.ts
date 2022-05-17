@@ -93,3 +93,31 @@ export interface IS3Image {
   Key: string;
   bucket: string;
 }
+
+export type Lesson = {
+  title: string;
+  slug: string;
+  content: Record<string, unknown>;
+  video_link: Record<string, unknown>;
+  free_preview: boolean;
+};
+
+export type Course = {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  price?: number;
+  image?: {
+    Location: string;
+    ETag: string;
+    key: string;
+    Key: string;
+    Bucket: string;
+  };
+  category?: string;
+  published: boolean;
+  paid?: boolean;
+  instructor: string;
+  lessons: Lesson[];
+};

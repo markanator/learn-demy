@@ -12,3 +12,7 @@ export const removeInitialImage = async (data: IS3Image) => {
 export const createCourse = async (data: Record<string, unknown>) => {
   return axios.post('/courses', data);
 };
+
+export const getCourseBySlug = async (slug: string) => {
+  return axios.get(`/courses/${slug}`);
+};
