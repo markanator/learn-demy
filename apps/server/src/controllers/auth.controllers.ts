@@ -23,9 +23,7 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).send('Name is required');
     }
     if (!password || password.length < 6) {
-      return res
-        .status(400)
-        .send('Password is required and should be min 6 characters long');
+      return res.status(400).send('Password is required and should be min 6 characters long');
     }
     const userExist = await User.findOne({ email }).exec();
     if (userExist) {
@@ -46,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
 
     return res.status(201).json({ ok: true });
   } catch (err) {
-    console.log(err);
+    console.warn(err?.message);
     return res.status(400).send('Error. Try again.');
   }
 };
@@ -85,7 +83,7 @@ export const login = async (req: Request, res: Response) => {
 
     return res.status(200).json(userExist);
   } catch (err) {
-    console.log(err);
+    console.warn(err);
     return res.status(400).send('Error. Try again.');
   }
 };
@@ -96,7 +94,7 @@ export const logout = async (req: Request, res: Response) => {
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.log(err);
+    console.warn(err);
     return res.status(400).send('Error. Try again.');
   }
 };
@@ -110,7 +108,7 @@ export const currentUser = async (req: ReqWithUser, res: Response) => {
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.log(err);
+    console.warn(err);
     return res.status(400).send('Error. Try again.');
   }
 };
@@ -165,12 +163,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
     await sesclient.sendEmail(params).promise();
     //  const emailSent = await sesclient.sendEmail(params).promise();
     // const sentRes = await emailSent.$response.data;
-
-    console.log({ shortCode });
+    // console.warn({ shortCode });
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.log(err);
+    console.warn(err);
     return res.status(400).send('Error. Try again.');
   }
 };
@@ -189,11 +186,11 @@ export const resetPassword = async (req: ReqWithUser, res: Response) => {
       return res.status(400).send('User with email not found');
     }
 
-    console.log('RESET PASSWORD');
+    // console.log('RESET PASSWORD');
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.log(err);
+    console.warn(err);
     return res.status(400).send('Error. Try again.');
   }
 };

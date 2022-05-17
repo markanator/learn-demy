@@ -21,7 +21,7 @@ export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
     // if user doesnt have a stripe account, create one in DB
     if (!user.stripe_account_id) {
       const account = await stripe.accounts.create({ type: 'express' });
-      console.log('stripe account', account.id);
+      console.info('stripe account', account.id);
       user.stripe_account_id = account.id;
       await user.save();
     }
@@ -32,20 +32,18 @@ export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
       return_url: process.env.STRIPE_REDIRECT_URL,
       type: 'account_onboarding',
     });
-    console.log({ accountLink });
     // pre-fill the stripe form such as email, send URL to UI
     accountLink = Object.assign(accountLink, {
       'stripe_user[email]': user.email,
     });
 
-    console.log({ accountLink });
+    // console.log({ accountLink });
     // send account lnk to UI as json
-    console.log({ accountLink });
     const url = `${accountLink.url}?${qs.stringify(accountLink)}`;
 
     res.status(200).json({ ok: true, url });
   } catch (error) {
-    console.log(error?.message);
+    console.warn(error?.message);
     res.status(400).send('An error occured');
   }
 };
@@ -57,9 +55,7 @@ export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
     if (!user) {
       return res.status(404).send('User not found');
     }
-    const stripeAccount = await stripe.accounts.retrieve(
-      user.stripe_account_id
-    );
+    const stripeAccount = await stripe.accounts.retrieve(user.stripe_account_id);
 
     if (!stripeAccount.charges_enabled) {
       return res.status(401).send('Not authorized');
@@ -78,11 +74,11 @@ export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
       .select('-password -passwordResetCode')
       .exec();
     // sellerUpdatedUser.password = undefined;
-    console.log({ dbSeller: sellerUpdatedUser.stripe_seller });
+    // console.log({ dbSeller: sellerUpdatedUser.stripe_seller });
 
     res.status(200).json(sellerUpdatedUser);
   } catch (error) {
-    console.log(error?.message);
+    console.warn(error?.message);
     res.status(400).send('An error occured');
   }
 };
@@ -97,7 +93,7 @@ export const currentInstructor = async (req: ReqWithUser, res: Response) => {
     }
     res.status(200).json({ ok: true });
   } catch (error) {
-    console.log(error?.message);
+    console.warn(error?.message);
     res.status(400).send('An error occured');
   }
 };

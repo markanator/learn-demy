@@ -16,11 +16,11 @@ const ApplyForInstructor = () => {
     setLoading(true);
     applyForInstructor()
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         window.location.href = data?.url;
       })
       .catch((err) => {
-        console.log(err.response.status);
+        console.warn(err.response.status);
         toast.error('Stripe onboarding failed. Try again.');
       })
       .finally(() => {

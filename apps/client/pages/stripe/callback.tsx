@@ -19,7 +19,7 @@ const StripeCallbackPage = () => {
     }
     getAccountStatus()
       .then(({ data }) => {
-        console.log('ACCOUNT STATUS', data);
+        // console.log('ACCOUNT STATUS', data);
         dispatch({
           type: 'LOGIN',
           payload: data,

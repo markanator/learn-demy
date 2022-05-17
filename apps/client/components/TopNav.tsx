@@ -21,7 +21,6 @@ const TopNav = () => {
       const { data } = await logoutUser();
       toast.success('Logged out successfully');
       dispatch({ type: 'LOGOUT' });
-      console.log('LOGOUT', data);
       router.push('/');
     } catch (error) {
       toast.error('Logged out failed. Please try again');

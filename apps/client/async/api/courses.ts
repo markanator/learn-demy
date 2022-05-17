@@ -21,3 +21,7 @@ export const getCourseBySlug = async (slug: string) => {
 export const uploadVideoToS3 = async (data: FormData, config: AxiosRequestConfig<FormData>) => {
   return axios.post(`/courses/upload-video`, data, config);
 };
+
+export const removeVideoFromS3 = async (data: IS3Image) => {
+  return axios.post('/courses/remove-video', data);
+};

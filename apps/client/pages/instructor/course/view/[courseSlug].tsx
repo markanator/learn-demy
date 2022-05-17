@@ -1,11 +1,11 @@
-import { useCourseBySlug } from '../../../../async/rq/courses';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { ProtectedInstructorPage } from '../../../../components/ProtectedPages/InstructorRoutes';
 import ReactMarkdown from 'react-markdown';
 import { partial } from 'lodash';
-import AddLessonForm from 'apps/client/components/Instructors/courseForms/AddLessonForm';
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { ProtectedInstructorPage } from '../../../../components/ProtectedPages/InstructorRoutes';
+import { useCourseBySlug } from '../../../../async/rq/courses';
+import AddLessonForm from '../../../../components/Instructors/courseForms/AddLessonForm';
 
 const ViewCourseById = () => {
   const router = useRouter();

@@ -47,7 +47,7 @@ const CreateCorusePage = () => {
       Resizer.imageFileResizer(file, 1280, 720, 'JPEG', 100, 0, async (uri) => {
         try {
           const { data } = await uploadImageToS3({ image: uri as string });
-          console.log('uplaoed image', data);
+          // console.log('uplaoed image', data);
           setImage(data as IS3Image);
           toast.success('Image uploaded successfully');
         } catch (error) {
@@ -65,9 +65,9 @@ const CreateCorusePage = () => {
     setValues({ ...values, loading: true });
 
     try {
-      console.log(' HANDLE IMAGE REMOVE');
+      // console.log(' HANDLE IMAGE REMOVE');
       const { data } = await removeInitialImage(image);
-      console.log('', data);
+      // console.log('', data);
       setImgPreview('');
       setImage(undefined);
       setUploadButtonText('Image Upload');

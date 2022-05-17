@@ -28,10 +28,7 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
     // prep image for upload
     // eslint-disable-next-line
     // @ts-ignore
-    const base64Data = new Buffer.from(
-      image.replace(/^data:image\/\w+;base64,/, ''),
-      'base64'
-    );
+    const base64Data = new Buffer.from(image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
     const type = image.split(';')[0].split('/')[1];
 
     const params: S3.PutObjectRequest = {
@@ -45,11 +42,12 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
 
     s3Client.upload(params, (err, data) => {
       if (err) {
-        console.log('Error uploading image: ', err?.message);
+        console.warn('Error uploading image: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      console.log('S3 DATA', data);
+      // console.log('S3 DATA', data);
       return res.status(201).send(data);
+      // prettier-ignore
     });
   } catch (error) {
     console.error(error?.message);
@@ -59,7 +57,7 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
 
 export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const { Bucket, Key } = req.body;
 
     if (!Bucket || !Key) {
@@ -72,10 +70,10 @@ export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
     // send remove request to s3
     s3Client.deleteObject(params, (err, data) => {
       if (err) {
-        console.log('Error deleting image: ', err?.message);
+        console.warn('Error deleting image: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      console.log('S3 DATA', data);
+      // console.log('S3 DATA', data);
       return res.status(200).send({ ok: true });
     });
   } catch (error) {
@@ -89,33 +87,59 @@ export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
 // ************************************************************************
 export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: Response) => {
   try {
-    const {video} = req.files;
+    const { video } = req.files;
 
     if (!video) {
       return res.status(400).send('Video is required');
     }
-    const type = (video as File).mimetype.split('/')[1]
+    const type = (video as File).mimetype.split('/')[1];
     const videoParams: S3.PutObjectRequest = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `${req.auth._id}_${nanoid()}.${type}`,
       Body: readFileSync((video as File).filepath),
       // ACL: 'public-read', // TODO: limit access to only this website
       ContentEncoding: (video as File).mimetype,
-    }
+    };
     // upload video to s3
     s3Client.upload(videoParams, (err, data) => {
       if (err) {
-        console.log('Error uploading video: ', err?.message);
+        console.warn('Error uploading video: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      console.log('S3 VIDEO DATA', data);
+      // console.log('S3 VIDEO DATA', data);
       return res.status(201).send(data);
+      // prettier-ignore
     });
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error. Try again.');
   }
-}
+};
+export const removeVideoFromS3 = async (req: ReqWithUser, res: Response) => {
+  try {
+    const { Bucket, Key } = req.body;
+
+    if (!Bucket || !Key) {
+      return res.status(400).send('Bucket and Key is required');
+    }
+    const params: S3.DeleteObjectRequest = {
+      Bucket,
+      Key,
+    };
+    // send remove request to s3
+    s3Client.deleteObject(params, (err, data) => {
+      if (err) {
+        console.warn('Error deleting image: ', err?.message);
+        return res.status(500).send(err?.message);
+      }
+      // console.log('S3 DATA', data);
+      return res.status(200).send({ ok: true });
+    });
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
+  }
+};
 
 // ************************************************************************
 // *************************** Courses ************************************

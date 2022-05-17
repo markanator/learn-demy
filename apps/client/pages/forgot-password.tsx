@@ -25,7 +25,7 @@ const ForgotPasswordPage = (props) => {
       toast.info('An email has been sent to you with a code.');
       setSuccess(true);
     } catch (error) {
-      console.log('testing');
+      // console.log('testing');
       toast.error('An error occurred! Please try again.');
     } finally {
       setIsLoading(false);
@@ -34,19 +34,19 @@ const ForgotPasswordPage = (props) => {
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    console.log('HANDLE RESET PASSWORD');
+    // console.log('HANDLE RESET PASSWORD');
     // return;
     setIsLoading(true);
     try {
       const { data } = await resetPassword({ email, code, newPassword });
-      console.log('RESET PASS DATA', data);
+      // console.log('RESET PASS DATA', data);
       setEmail('');
       setCode('');
       setNewPassword('');
       setSuccess(false);
       toast.success('Password changed successfully!');
     } catch (error) {
-      console.log('testing');
+      // console.log('testing');
       toast.error('An error occurred! Please try again.');
     } finally {
       setIsLoading(false);

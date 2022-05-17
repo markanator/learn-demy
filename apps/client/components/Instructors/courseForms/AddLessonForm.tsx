@@ -1,17 +1,31 @@
-import { uploadVideoToS3 } from '../../../async/api/courses';
 import React, { useCallback, useState } from 'react';
-import { Button, Form, Modal, ProgressBar } from 'react-bootstrap';
+import { Button, Form, Modal, OverlayTrigger, ProgressBar, Tooltip } from 'react-bootstrap';
+import { AiFillCloseCircle } from 'react-icons/ai';
+import { toast } from 'react-toastify';
+import { removeVideoFromS3, uploadVideoToS3 } from '../../../async/api/courses';
+import { IS3Image } from '../../../types';
 
 type Props = {
   openLessonModal: boolean;
   setOpenLessonModal: (open: boolean) => void;
 };
 
-const initialNewLessonState = {
+interface OinitialNewLessonState {
+  title: string;
+  content: string;
+  video?: IS3Image;
+}
+const initialNewLessonState: OinitialNewLessonState = {
   title: '',
   content: '',
-  video: {},
+  video: null,
 };
+
+const renderTooltip = (props) => (
+  <Tooltip id="remove-video" {...props}>
+    Remove Video
+  </Tooltip>
+);
 
 const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,9 +35,10 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
 
   const handleClouseOut = () => {
     setOpenLessonModal(false);
-    setVideoUploadProgress(-1);
-    setUploadVideoText('Upload Video');
+    setIsLoading(false);
     setNewLessonValues(initialNewLessonState);
+    setUploadVideoText('Upload Video');
+    setVideoUploadProgress(-1);
   };
 
   const handleChange = (e) => {
@@ -32,11 +47,9 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
   };
 
   const onUploadProgress = useCallback(({ loaded, total }) => {
-    console.log({ loaded, total });
     // eslint-disable-next-line prefer-const
     let percent = Math.round((100 * loaded) / total);
     setVideoUploadProgress(percent);
-    console.log({ percent });
   }, []);
 
   const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +58,6 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
       setIsLoading(true);
       const file = e.target.files[0];
       if (file) {
-        console.log({ file });
         setUploadVideoText(file.name);
 
         const videoFormData = new FormData();
@@ -55,12 +67,30 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
           onUploadProgress,
         });
         // successful response
-        console.log('VIDEO DATA', data);
         setNewLessonValues({ ...newLessonValues, video: data });
-        // setUploadVideoText('Upload Video');
         setVideoUploadProgress(-1);
+        toast.success('Video uploaded successfully');
       }
     } catch (error) {
+      toast.error('Video upload failed. Please try again');
+      console.warn(error?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVideoRemove = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const { data } = await removeVideoFromS3(newLessonValues.video);
+      // console.log('REMOVE VIDEO', data);
+      setNewLessonValues({ ...newLessonValues, video: null });
+      setUploadVideoText('Upload Video');
+      toast.success('Video removed successfully');
+      setVideoUploadProgress(-1);
+    } catch (error) {
+      toast.error('Video could not be removed. Please try again later');
       console.warn(error?.message);
     } finally {
       setIsLoading(false);
@@ -73,6 +103,7 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
     console.log('submit newLessonValues', newLessonValues);
     handleClouseOut();
   };
+
   return (
     <Modal centered backdrop="static" show={openLessonModal} onHide={handleClouseOut}>
       <Modal.Header closeButton>
@@ -112,17 +143,29 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
                 now={videoUploadProgress}
               />
             )}
-            <Form.Label className=" w-100 btn btn-outline-secondary btn-block text-left">
-              <span>{uploadVideoText}</span>
-              <Form.Control
-                type="file"
-                name="video"
-                className="w-100"
-                onChange={handleVideoChange}
-                accept="video/*"
-                hidden
-              />
-            </Form.Label>
+            <div className="d-flex flex-row">
+              <Form.Label className=" w-100 btn btn-outline-secondary btn-block text-left">
+                <span>{uploadVideoText}</span>
+                <Form.Control
+                  type="file"
+                  name="video"
+                  className="w-100"
+                  onChange={handleVideoChange}
+                  accept="video/*"
+                  hidden
+                />
+              </Form.Label>
+
+              {!isLoading && newLessonValues.video?.Location && (
+                <>
+                  <OverlayTrigger overlay={renderTooltip}>
+                    <span onClick={handleVideoRemove} className="pt-1 ms-4">
+                      <AiFillCloseCircle className="fs-2 text-danger" />
+                    </span>
+                  </OverlayTrigger>
+                </>
+              )}
+            </div>
           </Form.Group>
         </fieldset>
 
