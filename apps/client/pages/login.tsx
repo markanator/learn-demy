@@ -22,7 +22,6 @@ const Login = () => {
     try {
       setIsLoading(true);
       const { data } = await loginUser({ email, password });
-      // console.log(data);
       toast.success('Successfully logged in!');
       dispatch({ type: 'LOGIN', payload: data });
       router.push('/user');

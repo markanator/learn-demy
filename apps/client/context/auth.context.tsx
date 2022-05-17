@@ -72,7 +72,6 @@ const AuthProvider = ({ children }) => {
           axios
             .get('/auth/logout')
             .then(() => {
-              // console.log('/401 error > logout');
               dispatch({ type: 'LOGOUT' });
               router.push('/login');
             })
@@ -98,7 +97,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const getCSRF = async () => {
       const { data } = await axios.get('/csrf-token');
-      // console.log('CSRF', data);
+      // console.info('CSRF', data);
       axios.defaults.headers['X-CSRF-TOKEN'] = data.csrfToken;
     };
     getCSRF();

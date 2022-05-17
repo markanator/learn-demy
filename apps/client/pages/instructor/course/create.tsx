@@ -47,7 +47,6 @@ const CreateCorusePage = () => {
       Resizer.imageFileResizer(file, 1280, 720, 'JPEG', 100, 0, async (uri) => {
         try {
           const { data } = await uploadImageToS3({ image: uri as string });
-          // console.log('uplaoed image', data);
           setImage(data as IS3Image);
           toast.success('Image uploaded successfully');
         } catch (error) {
@@ -65,9 +64,7 @@ const CreateCorusePage = () => {
     setValues({ ...values, loading: true });
 
     try {
-      // console.log(' HANDLE IMAGE REMOVE');
-      const { data } = await removeInitialImage(image);
-      // console.log('', data);
+      await removeInitialImage(image);
       setImgPreview('');
       setImage(undefined);
       setUploadButtonText('Image Upload');
@@ -83,8 +80,7 @@ const CreateCorusePage = () => {
     e.preventDefault();
     setValues({ ...values, loading: true });
     try {
-      const { data } = await createCourse({ ...values, image });
-      console.log('CREATE COURSE DATA', data);
+      await createCourse({ ...values, image });
       toast.success('Course created successfully. Redirecting to courses page');
       router.push('/instructor');
       setValues(initialState);

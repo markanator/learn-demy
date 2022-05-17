@@ -16,15 +16,14 @@ const Register = () => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      const { data } = await registerNewUser({ name, email, password });
-      console.log(data);
+      await registerNewUser({ name, email, password });
       toast.success('Registered successfully!');
       setName('');
       setEmail('');
       setPassword('');
     } catch (error) {
       toast.error(error?.response?.data);
-      console.error(error?.response?.data);
+      console.warn(error?.response?.data);
     } finally {
       setIsLoading(false);
     }

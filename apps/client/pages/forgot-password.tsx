@@ -5,8 +5,6 @@ import { toast } from 'react-toastify';
 import { forgotPassword, resetPassword } from '../async/api/auth';
 import useRerouteAuthUser from '../hooks/useRerouteAuthUser';
 
-// type Props = {}
-
 const ForgotPasswordPage = (props) => {
   useRerouteAuthUser();
 
@@ -21,11 +19,9 @@ const ForgotPasswordPage = (props) => {
     setIsLoading(true);
     try {
       await forgotPassword({ email });
-      // console.log('REQUEST RESET PASSWORD', data);
       toast.info('An email has been sent to you with a code.');
       setSuccess(true);
     } catch (error) {
-      // console.log('testing');
       toast.error('An error occurred! Please try again.');
     } finally {
       setIsLoading(false);
@@ -34,19 +30,16 @@ const ForgotPasswordPage = (props) => {
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    // console.log('HANDLE RESET PASSWORD');
-    // return;
     setIsLoading(true);
     try {
-      const { data } = await resetPassword({ email, code, newPassword });
-      // console.log('RESET PASS DATA', data);
+      await resetPassword({ email, code, newPassword });
       setEmail('');
       setCode('');
       setNewPassword('');
       setSuccess(false);
       toast.success('Password changed successfully!');
     } catch (error) {
-      // console.log('testing');
+      console.warn(error?.message);
       toast.error('An error occurred! Please try again.');
     } finally {
       setIsLoading(false);
@@ -55,9 +48,7 @@ const ForgotPasswordPage = (props) => {
 
   return (
     <div>
-      <h1 className="jumbotron text-center bg-primary square py-4 mb-4">
-        Forgot Password
-      </h1>
+      <h1 className="jumbotron text-center bg-primary square py-4 mb-4">Forgot Password</h1>
 
       <div className="container col-md-4 offset-md-4 pb-5">
         <form onSubmit={success ? handleUpdatePassword : handleSubmit}>

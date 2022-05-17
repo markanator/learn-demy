@@ -16,7 +16,6 @@ const ApplyForInstructor = () => {
     setLoading(true);
     applyForInstructor()
       .then(({ data }) => {
-        // console.log(data);
         window.location.href = data?.url;
       })
       .catch((err) => {

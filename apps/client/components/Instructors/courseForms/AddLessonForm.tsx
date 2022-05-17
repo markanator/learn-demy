@@ -83,8 +83,7 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data } = await removeVideoFromS3(newLessonValues.video);
-      // console.log('REMOVE VIDEO', data);
+      await removeVideoFromS3(newLessonValues.video);
       setNewLessonValues({ ...newLessonValues, video: null });
       setUploadVideoText('Upload Video');
       toast.success('Video removed successfully');
@@ -98,9 +97,9 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
   };
 
   const handleAddLesson = (e) => {
-    // submit to backend
+    // TODO: submit to backend
     e.preventDefault();
-    console.log('submit newLessonValues', newLessonValues);
+    console.info('submit newLessonValues', newLessonValues);
     handleClouseOut();
   };
 

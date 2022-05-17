@@ -37,7 +37,6 @@ export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
       'stripe_user[email]': user.email,
     });
 
-    // console.log({ accountLink });
     // send account lnk to UI as json
     const url = `${accountLink.url}?${qs.stringify(accountLink)}`;
 
@@ -74,7 +73,6 @@ export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
       .select('-password -passwordResetCode')
       .exec();
     // sellerUpdatedUser.password = undefined;
-    // console.log({ dbSeller: sellerUpdatedUser.stripe_seller });
 
     res.status(200).json(sellerUpdatedUser);
   } catch (error) {

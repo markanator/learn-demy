@@ -45,7 +45,6 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
         console.warn('Error uploading image: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      // console.log('S3 DATA', data);
       return res.status(201).send(data);
       // prettier-ignore
     });
@@ -57,7 +56,6 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
 
 export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
   try {
-    // console.log(req.body);
     const { Bucket, Key } = req.body;
 
     if (!Bucket || !Key) {
@@ -68,12 +66,11 @@ export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
       Key,
     };
     // send remove request to s3
-    s3Client.deleteObject(params, (err, data) => {
+    s3Client.deleteObject(params, (err) => {
       if (err) {
         console.warn('Error deleting image: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      // console.log('S3 DATA', data);
       return res.status(200).send({ ok: true });
     });
   } catch (error) {
@@ -106,7 +103,6 @@ export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: Response
         console.warn('Error uploading video: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      // console.log('S3 VIDEO DATA', data);
       return res.status(201).send(data);
       // prettier-ignore
     });
@@ -127,12 +123,11 @@ export const removeVideoFromS3 = async (req: ReqWithUser, res: Response) => {
       Key,
     };
     // send remove request to s3
-    s3Client.deleteObject(params, (err, data) => {
+    s3Client.deleteObject(params, (err) => {
       if (err) {
-        console.warn('Error deleting image: ', err?.message);
+        console.warn('Error deleting VIDEO: ', err?.message);
         return res.status(500).send(err?.message);
       }
-      // console.log('S3 DATA', data);
       return res.status(200).send({ ok: true });
     });
   } catch (error) {

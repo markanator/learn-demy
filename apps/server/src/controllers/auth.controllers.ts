@@ -186,8 +186,6 @@ export const resetPassword = async (req: ReqWithUser, res: Response) => {
       return res.status(400).send('User with email not found');
     }
 
-    // console.log('RESET PASSWORD');
-
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.warn(err);

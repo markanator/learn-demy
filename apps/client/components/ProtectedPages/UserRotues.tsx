@@ -21,7 +21,7 @@ const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
           setIsLoading(false);
         }
       } catch (error) {
-        console.log(error?.message);
+        console.warn(error?.message);
         setIsLoading(true);
         router.push('/login');
       }

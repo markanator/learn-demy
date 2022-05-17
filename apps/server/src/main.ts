@@ -33,8 +33,8 @@ app.use(morgan('dev'));
 // MONGOOSE
 mongoose
   .connect(process.env.DB_URL, {})
-  .then(() => console.log('DB connected'))
-  .catch((err) => console.log('DB Error => ', err));
+  .then(() => console.info('DB connected'))
+  .catch((err) => console.error('DB Error => ', err));
 
 // routes
 app.get('/', (_, res) => res.send('Server up!'));
@@ -51,6 +51,6 @@ app.get('/csrf-token', (req, res) =>
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
+  console.info(`Listening at http://localhost:${port}`);
 });
 server.on('error', console.error);
