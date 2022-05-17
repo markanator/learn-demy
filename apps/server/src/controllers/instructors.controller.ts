@@ -4,6 +4,7 @@ import User from '../models/User';
 import { config } from 'dotenv';
 import Stripe from 'stripe';
 import qs from 'query-string';
+import Course from '../models/Course';
 
 config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -98,5 +99,19 @@ export const currentInstructor = async (req: ReqWithUser, res: Response) => {
   } catch (error) {
     console.log(error?.message);
     res.status(400).send('An error occured');
+  }
+};
+
+export const instructorCourses = async (req: ReqWithUser, res: Response) => {
+  try {
+    const courses = await Course.find({
+      instructor: req.auth._id,
+    })
+      .sort({ createdAt: -1 })
+      .exec();
+    return res.status(200).json(courses);
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
   }
 };

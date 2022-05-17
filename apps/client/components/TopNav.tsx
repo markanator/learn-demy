@@ -41,28 +41,26 @@ const TopNav = () => {
           placement="end"
         >
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title id={`offcanvasNavbarLabel-expand-lg`}>
-              Learnwind
-            </Offcanvas.Title>
+            <Offcanvas.Title id={`offcanvasNavbarLabel-expand-lg`}>Learnwind</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3">
               <>
-                {user && user?.role
-                  ? user?.role?.includes('Instructor') && (
-                      <Nav.Item>
-                        <Link href="/instructor/course/create" passHref>
-                          <Nav.Link>Create a Course</Nav.Link>
-                        </Link>
-                      </Nav.Item>
-                    )
-                  : user?.role?.includes('Subscriber') && (
-                      <Nav.Item>
-                        <Link href="/user/apply" passHref>
-                          <Nav.Link>Instructor Signup</Nav.Link>
-                        </Link>
-                      </Nav.Item>
-                    )}
+                {user && user?.role && user?.role?.includes('Instructor') ? (
+                  <Nav.Item>
+                    <Link href="/instructor/course/create" passHref>
+                      <Nav.Link>Create a Course</Nav.Link>
+                    </Link>
+                  </Nav.Item>
+                ) : (
+                  user?.role?.includes('Subscriber') && (
+                    <Nav.Item>
+                      <Link href="/user/apply" passHref>
+                        <Nav.Link>Instructor Signup</Nav.Link>
+                      </Link>
+                    </Nav.Item>
+                  )
+                )}
               </>
 
               {user?.role && user?.role?.includes('Instructor') && (
@@ -88,11 +86,7 @@ const TopNav = () => {
                 </>
               ) : (
                 <>
-                  <NavDropdown
-                    title={user?.name + ' '}
-                    className="me-4"
-                    placement="bottom-end"
-                  >
+                  <NavDropdown title={user?.name + ' '} className="me-4" placement="bottom-end">
                     <Link href="/user" passHref>
                       <NavDropdown.Item>Dashboard</NavDropdown.Item>
                     </Link>

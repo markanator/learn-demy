@@ -5,14 +5,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../styles/index.css';
 import TopNav from '../components/TopNav';
 import AuthProvider from '../context/auth.context';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const client = new QueryClient();
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
-      <TopNav />
-      <Component {...pageProps} />
-      <ToastContainer position="top-center" />
-    </AuthProvider>
+    <QueryClientProvider client={client}>
+      <AuthProvider>
+        <TopNav />
+        <Component {...pageProps} />
+        <ToastContainer position="top-center" />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

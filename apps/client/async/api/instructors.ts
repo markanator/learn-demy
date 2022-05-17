@@ -11,3 +11,7 @@ export const getAccountStatus = async () => {
 export const getCurrentInstructors = async () => {
   return axios.get('/instructors/current-instructor');
 };
+
+export const getInstructorAuthoredCourses = async () => {
+  return axios.get('/instructors/my-courses');
+};
