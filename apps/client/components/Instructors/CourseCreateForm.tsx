@@ -1,5 +1,14 @@
+// import Image from 'next/image';
 import React from 'react';
-import { Button, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import {
+  Button,
+  Form,
+  Row,
+  Col,
+  InputGroup,
+  Badge,
+  Image,
+} from 'react-bootstrap';
 
 type Props = {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -18,6 +27,7 @@ type Props = {
     >
   ) => void;
   handleImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRemove: (e: React.MouseEvent<HTMLInputElement>) => void;
   imgPreview?: string;
   uploadButtonText?: string;
 };
@@ -29,6 +39,7 @@ const CourseCreateForm = ({
   handleImage,
   imgPreview,
   uploadButtonText,
+  handleRemove,
 }: Props) => {
   return (
     <Form onSubmit={handleSubmit} className="form">
@@ -120,14 +131,23 @@ const CourseCreateForm = ({
           </Form.Group>
         </Col>
         {imgPreview && (
-          <Col>
+          <Col className="position-relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Badge
+              pill
+              onClick={handleRemove}
+              className="position-absolute cursor-pointer"
+              style={{ top: '-5px', left: '0px', cursor: 'pointer' }}
+            >
+              X
+            </Badge>
+            <Image
               src={imgPreview}
               alt="iamge preview"
-              className="img-fluid"
+              className="img"
+              style={{ objectFit: 'cover' }}
               height={100}
-              width={100}
+              width="auto"
             />
           </Col>
         )}

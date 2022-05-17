@@ -49,3 +49,30 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
     return res.status(500).send('Error. Try again.');
   }
 };
+
+export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
+  try {
+    console.log(req.body);
+    const { Bucket, Key } = req.body;
+
+    if (!Bucket || !Key) {
+      return res.status(400).send('Bucket and Key is required');
+    }
+    const params: S3.DeleteObjectRequest = {
+      Bucket,
+      Key,
+    };
+    // send remove request to s3
+    s3Client.deleteObject(params, (err, data) => {
+      if (err) {
+        console.log('Error deleting image: ', err?.message);
+        return res.status(500).send(err?.message);
+      }
+      console.log('S3 DATA', data);
+      return res.status(200).send({ ok: true });
+    });
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
+  }
+};

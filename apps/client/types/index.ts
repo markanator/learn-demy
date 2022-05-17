@@ -85,3 +85,11 @@ export interface Datum {
 }
 
 export type UserRole = 'Subscriber' | 'Instructor' | 'Admin';
+
+export interface IS3Image {
+  ETag: string;
+  Location: string;
+  key: string;
+  Key: string;
+  bucket: string;
+}
