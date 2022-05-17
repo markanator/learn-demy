@@ -3,23 +3,28 @@ import React, { useState } from 'react';
 import Resizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
 import {
+  createCourse,
   removeInitialImage,
   uploadImageToS3,
 } from '../../../async/api/courses';
 import { ProtectedInstructorPage } from '../../../components/ProtectedPages/InstructorRoutes';
 import CourseCreateForm from '../../../components/Instructors/CourseCreateForm';
 import { IS3Image } from '../../../types';
+import { useRouter } from 'next/router';
+
+const initialState = {
+  name: '',
+  description: '',
+  price: '9.99',
+  uploading: false,
+  paid: '',
+  loading: false,
+  category: '',
+};
 
 const CreateCorusePage = () => {
-  const [values, setValues] = useState({
-    name: '',
-    description: '',
-    price: '9.99',
-    uploading: false,
-    paid: '',
-    loading: false,
-    category: '',
-  });
+  const router = useRouter();
+  const [values, setValues] = useState(initialState);
   const [image, setImage] = useState<IS3Image>(undefined);
   const [imgPreview, setImgPreview] = useState('');
   const [uploadButtonText, setUploadButtonText] = useState<
@@ -34,23 +39,25 @@ const CreateCorusePage = () => {
     event.preventDefault();
     setValues({ ...values, loading: true });
     const file = event.target.files[0];
-    setImgPreview(window.URL.createObjectURL(file));
-    setUploadButtonText(file.name);
+    if (file) {
+      setImgPreview(window.URL.createObjectURL(file));
+      setUploadButtonText(file.name);
 
-    // resize
-    Resizer.imageFileResizer(file, 1280, 720, 'JPEG', 100, 0, async (uri) => {
-      try {
-        const { data } = await uploadImageToS3({ image: uri as string });
-        console.log('uplaoed image', data);
-        setImage(data as IS3Image);
-        toast.success('Image uploaded successfully');
-      } catch (error) {
-        console.warn(error?.message);
-        toast.error('Image uploaded failed. Please try again');
-      } finally {
-        setValues({ ...values, loading: false });
-      }
-    });
+      // resize
+      Resizer.imageFileResizer(file, 1280, 720, 'JPEG', 100, 0, async (uri) => {
+        try {
+          const { data } = await uploadImageToS3({ image: uri as string });
+          console.log('uplaoed image', data);
+          setImage(data as IS3Image);
+          toast.success('Image uploaded successfully');
+        } catch (error) {
+          console.warn(error?.message);
+          toast.error('Image uploaded failed. Please try again');
+        } finally {
+          setValues({ ...values, loading: false });
+        }
+      });
+    }
   };
 
   const handleRemove = async (e) => {
@@ -72,9 +79,21 @@ const CreateCorusePage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(values);
+    setValues({ ...values, loading: true });
+    try {
+      const { data } = await createCourse({ ...values, image });
+      console.log('CREATE COURSE DATA', data);
+      toast.success('Course created successfully. Redirecting to courses page');
+      router.push('/instructor');
+      setValues(initialState);
+    } catch (error) {
+      console.warn(error?.message);
+      toast.error('Image uploaded failed. Please try again');
+    } finally {
+      setValues({ ...values, loading: false });
+    }
   };
 
   return (

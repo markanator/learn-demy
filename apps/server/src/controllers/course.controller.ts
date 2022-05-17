@@ -1,7 +1,9 @@
 import type { Response } from 'express';
 import type { ReqWithUser } from '../app/types';
+import slugify from 'slugify';
 import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
+import Course from '../models/Course';
 
 const awsConfig: S3.ClientConfiguration = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -71,6 +73,38 @@ export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
       console.log('S3 DATA', data);
       return res.status(200).send({ ok: true });
     });
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
+  }
+};
+
+export const createCourse = async (req: ReqWithUser, res: Response) => {
+  try {
+    const { name, description, paid, price, category, image } = req.body;
+    if (!name || !description || !paid) {
+      return res.status(400).send('Name, description and price are required');
+    }
+    const slug = slugify(name.toLowerCase());
+    const alreadyExists = await Course.findOne({
+      slug,
+    });
+    if (alreadyExists) {
+      return res.status(400).send('Course already exists');
+    }
+
+    const course = await new Course({
+      name,
+      slug,
+      instructor: req.auth._id,
+      description: description || '',
+      paid: paid === 'true',
+      price: paid === 'true' ? parseFloat(price) : 0,
+      category: category || '',
+      image,
+    }).save();
+
+    return res.status(201).send({ ok: true, course });
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error. Try again.');

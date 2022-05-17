@@ -91,9 +91,8 @@ const CourseCreateForm = ({
                 placeholder="1.00"
                 min="1.00"
                 max="599.99"
-                step="1"
                 name="price"
-                inputMode="numeric"
+                pattern="^\d+(\.|\,)\d{2}$"
                 required
                 aria-label="Dollar amount (with dot and two decimal places)"
                 onChange={handleChange}

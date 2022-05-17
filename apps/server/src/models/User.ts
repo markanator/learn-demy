@@ -7,12 +7,14 @@ export const RolesEnum = {
   Admin: 'Admin',
 };
 
+export type UserRole = 'Subscriber' | 'Instructor' | 'Admin';
+
 export interface IUser {
   name: string;
   email: string;
   password: string;
   picture?: string;
-  role: string[];
+  role: UserRole[];
   stripe_account_id?: string;
   stripe_seller?: Record<string, unknown>;
   stripeSession?: Record<string, unknown>;
