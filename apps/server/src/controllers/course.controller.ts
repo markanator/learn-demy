@@ -1,9 +1,10 @@
 import type { Response } from 'express';
-import type { ReqWithUser } from '../app/types';
+import type { File, ReqWithUser, ReqWithUserAndFormData } from '../app/types';
 import slugify from 'slugify';
 import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
 import Course from '../models/Course';
+import { readFileSync } from 'fs';
 
 const awsConfig: S3.ClientConfiguration = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -13,6 +14,10 @@ const awsConfig: S3.ClientConfiguration = {
 };
 
 const s3Client = new S3(awsConfig);
+
+// ************************************************************************
+// *************************** IMAGES *************************************
+// ************************************************************************
 
 export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
   try {
@@ -78,6 +83,43 @@ export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
     return res.status(500).send('Error. Try again.');
   }
 };
+
+// ************************************************************************
+// *************************** VIDEOS *************************************
+// ************************************************************************
+export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: Response) => {
+  try {
+    const {video} = req.files;
+
+    if (!video) {
+      return res.status(400).send('Video is required');
+    }
+    const type = (video as File).mimetype.split('/')[1]
+    const videoParams: S3.PutObjectRequest = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `${req.auth._id}_${nanoid()}.${type}`,
+      Body: readFileSync((video as File).filepath),
+      // ACL: 'public-read', // TODO: limit access to only this website
+      ContentEncoding: (video as File).mimetype,
+    }
+    // upload video to s3
+    s3Client.upload(videoParams, (err, data) => {
+      if (err) {
+        console.log('Error uploading video: ', err?.message);
+        return res.status(500).send(err?.message);
+      }
+      console.log('S3 VIDEO DATA', data);
+      return res.status(201).send(data);
+    });
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
+  }
+}
+
+// ************************************************************************
+// *************************** Courses ************************************
+// ************************************************************************
 
 export const createCourse = async (req: ReqWithUser, res: Response) => {
   try {

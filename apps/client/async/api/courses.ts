@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from 'axios';
 import { IS3Image } from '../../types';
 import axios from '../axios';
 
@@ -15,4 +16,8 @@ export const createCourse = async (data: Record<string, unknown>) => {
 
 export const getCourseBySlug = async (slug: string) => {
   return axios.get(`/courses/${slug}`);
+};
+
+export const uploadVideoToS3 = async (data: FormData, config: AxiosRequestConfig<FormData>) => {
+  return axios.post(`/courses/upload-video`, data, config);
 };

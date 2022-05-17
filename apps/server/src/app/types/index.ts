@@ -1,8 +1,12 @@
 import { Request } from 'express';
 import { Schema } from 'mongoose';
 const { ObjectId } = Schema.Types;
+import type { Fields, Files, File as FFile } from 'node_modules/@types/formidable';
 
 export type ReqWithUser = Request & { auth: { _id: string } };
+export type ReqWithUserAndFormData = ReqWithUser & { fields: Fields; files: Files };
+export type File = FFile;
+
 
 export type Lesson = {
   title: string;
