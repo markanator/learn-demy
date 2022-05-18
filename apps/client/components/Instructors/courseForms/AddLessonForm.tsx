@@ -1,8 +1,9 @@
+import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 import { Button, Form, Modal, OverlayTrigger, ProgressBar, Tooltip } from 'react-bootstrap';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { toast } from 'react-toastify';
-import { removeVideoFromS3, uploadVideoToS3 } from '../../../async/api/courses';
+import { addLessonToCourse, removeVideoFromS3, uploadVideoToS3 } from '../../../async/api/courses';
 import { IS3Image } from '../../../types';
 
 type Props = {
@@ -28,6 +29,8 @@ const renderTooltip = (props) => (
 );
 
 const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
+  const router = useRouter();
+  const { courseSlug } = router.query;
   const [isLoading, setIsLoading] = useState(false);
   const [newLessonValues, setNewLessonValues] = useState(initialNewLessonState);
   const [uploadVideoText, setUploadVideoText] = useState<'Upload Video' | string>('Upload Video');
@@ -96,11 +99,18 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
     }
   };
 
-  const handleAddLesson = (e) => {
+  const handleAddLesson = async (e) => {
     // TODO: submit to backend
     e.preventDefault();
-    console.info('submit newLessonValues', newLessonValues);
-    handleClouseOut();
+    try {
+      const { data } = await addLessonToCourse(courseSlug as string, { ...newLessonValues });
+      console.info('success', data);
+      handleClouseOut();
+      toast.success('Lesson added successfully');
+    } catch (error) {
+      console.error(error?.message);
+      toast.error('Lesson could not be added. Please try again later');
+    }
   };
 
   return (

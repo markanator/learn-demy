@@ -1,5 +1,11 @@
 import type { Response } from 'express';
-import type { File, ReqWithUser, ReqWithUserAndFormData, ResWithUserRoles } from '../app/types';
+import type {
+  Course as TCourse,
+  File,
+  ReqWithUser,
+  ReqWithUserAndFormData,
+  ResWithUserRoles,
+} from '../app/types';
 import slugify from 'slugify';
 import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
@@ -82,7 +88,7 @@ export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
 // ************************************************************************
 // *************************** VIDEOS *************************************
 // ************************************************************************
-export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: Response) => {
+export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: ResWithUserRoles) => {
   try {
     const { video } = req.files;
 
@@ -111,7 +117,7 @@ export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: Response
     return res.status(500).send('Error. Try again.');
   }
 };
-export const removeVideoFromS3 = async (req: ReqWithUser, res: Response) => {
+export const removeVideoFromS3 = async (req: ReqWithUser, res: ResWithUserRoles) => {
   try {
     const { Bucket, Key } = req.body;
 
@@ -140,7 +146,7 @@ export const removeVideoFromS3 = async (req: ReqWithUser, res: Response) => {
 // *************************** Courses ************************************
 // ************************************************************************
 
-export const createCourse = async (req: ReqWithUser, res: Response) => {
+export const createCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
   try {
     const { name, description, paid, price, category, image } = req.body;
     if (!name || !description || !paid) {
@@ -196,5 +202,45 @@ export const getCourseBySlug = async (req: ReqWithUser, res: ResWithUserRoles) =
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error. Try again.');
+  }
+};
+
+export const addLessonToCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
+  try {
+    const instructorId = req.auth._id;
+    const { slug } = req.params;
+    const { title, content, video } = req.body;
+    if (!title) {
+      return res.status(400).send('Missing fields is required');
+    }
+
+    const course = await Course.findOne({ slug }).populate('instructor', '_id').exec();
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
+    // role check, needs to be Admin or course.instructor owner
+    if (
+      !res.locals.userRoles.includes('Admin') &&
+      (course.instructor as unknown as { _id: string })._id.toString() !== instructorId.toString()
+    ) {
+      return res.status(403).send('You are not authorized to add lessons to this course');
+    }
+
+    const updatedCourse = await Course.findOneAndUpdate<TCourse>(
+      { slug },
+      {
+        $push: { lessons: { title, content, video, slug: slugify(title) } },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate('instructor', '_id name')
+      .exec();
+
+    res.status(201).json(updatedCourse);
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error, add lesson failed. Try again.');
   }
 };

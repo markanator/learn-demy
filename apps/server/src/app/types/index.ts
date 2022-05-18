@@ -14,15 +14,15 @@ export type File = FFile;
 export type Lesson = {
   title: string;
   slug: string;
-  content: Record<string, unknown>;
-  video_link: Record<string, unknown>;
+  content: string;
+  video: Record<string, unknown>;
   free_preview: boolean;
 };
 
 export type Course = {
   name: string;
   slug: string;
-  description: Record<string, unknown>;
+  description: string;
   price: number;
   image: Record<string, unknown>;
   category: string;

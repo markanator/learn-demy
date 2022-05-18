@@ -17,10 +17,10 @@ const lessonSchema = new mongoose.Schema<Lesson>(
       lowercase: true,
     },
     content: {
-      type: {},
+      type: String,
       minlength: 200,
     },
-    video_link: {},
+    video: {},
     free_preview: {
       type: Boolean,
       default: false,
@@ -43,7 +43,7 @@ const courseSchema = new mongoose.Schema<Course>(
       lowercase: true,
     },
     description: {
-      type: {},
+      type: String,
       minlength: 200,
       required: true,
     },
