@@ -44,7 +44,7 @@ const courseSchema = new mongoose.Schema<Course>(
     },
     description: {
       type: String,
-      minlength: 200,
+      minlength: 20,
       required: true,
     },
     price: {

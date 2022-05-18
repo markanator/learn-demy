@@ -91,7 +91,7 @@ export interface IS3Image {
   Location: string;
   key: string;
   Key: string;
-  bucket: string;
+  Bucket: string;
 }
 
 export type Lesson = {
