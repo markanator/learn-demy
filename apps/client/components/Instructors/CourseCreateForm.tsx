@@ -62,7 +62,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
     }
   };
 
-  const handleRemove = async (e) => {
+  const handleRemoveImage = async (e) => {
     e.preventDefault();
     setValues({ ...values, loading: true });
 
@@ -70,6 +70,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
       await removeInitialImage(image);
       setImgPreview('');
       setImage(undefined);
+      // isEditing && setValues({ ...values, image: '' });
       setUploadButtonText('Image Upload');
     } catch (error) {
       console.warn(error?.message);
@@ -94,15 +95,25 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
       setValues({ ...values, loading: false });
     }
   };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (!isEditing || !course?.slug) {
+      return;
+    }
     try {
-      const { data } = await udpateCourse({ ...values, image });
-      console.log('updatedCourse', data);
-      toast.success('Course updated successfully');
+      const { loading, ...tempValues } = { ...values, image };
+      const { data } = await udpateCourse(course?.slug, tempValues);
+      if (data?.course) {
+        console.log('updatedCourse', data?.course);
+        setValues(data.course);
+        setImage(data.course?.image);
+        setImgPreview(data.course?.image?.Location ?? '');
+        toast.success('Course updated successfully');
+      }
     } catch (error) {
       console.warn(error?.message);
-      toast.error('Image uploaded failed. Please try again');
+      toast.error('Course update failed. Please try again');
     }
   };
   return (
@@ -200,7 +211,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
               <Col>
                 <Badge
                   pill
-                  onClick={handleRemove}
+                  onClick={handleRemoveImage}
                   className="position-absolute cursor-pointer"
                   style={{ top: '-5px', left: '0px', cursor: 'pointer' }}
                 >
@@ -214,18 +225,6 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
                   height={100}
                   width="auto"
                 />
-              </Col>
-              <Col>
-                {isEditing && image && (
-                  <Image
-                    src={image?.Location}
-                    alt="imge preview"
-                    className="img"
-                    style={{ objectFit: 'cover' }}
-                    height={100}
-                    width="auto"
-                  />
-                )}
               </Col>
             </Row>
           </Col>
