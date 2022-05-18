@@ -7,6 +7,7 @@ import {
   uploadVideoToS3,
   removeVideoFromS3,
   addLessonToCourse,
+  updateCourse,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -27,8 +28,11 @@ router.post(
 );
 router.post('/remove-video', requireAuth, checkRoleMW('Instructor', 'Admin'), removeVideoFromS3);
 // COURSES
-router.post('/', requireAuth, checkRoleMW('Instructor', 'Admin'), createCourse);
 router.get('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), getCourseBySlug);
+router.post('/', requireAuth, checkRoleMW('Instructor', 'Admin'), createCourse);
+router.put('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), updateCourse);
+
+// LESSONS
 router.post('/:slug/lessons', requireAuth, checkRoleMW('Instructor', 'Admin'), addLessonToCourse);
 
 export default router;

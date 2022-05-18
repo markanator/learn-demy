@@ -178,6 +178,47 @@ export const createCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
   }
 };
 
+export const updateCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
+  try {
+    const isAdmin = res.locals.userRoles.includes('Admin');
+    const { slug } = req.params;
+    const filterParams = isAdmin ? { slug } : { slug, instructor: req.auth._id };
+    const alreadyExists = await Course.findOne(filterParams).exec();
+    if (!alreadyExists) {
+      return res.status(400).send('Course already exists');
+    }
+    // check resource owner
+    if (!isAdmin && alreadyExists.instructor.toString() !== req.auth._id.toString()) {
+      return res.status(403).send('You are not authorized to view this course');
+    }
+
+    // console.log({ filterParams, alreadyExists });
+    // return res.status(200).send({ ok: true });
+    const { name, description, paid, price, image } = req.body;
+    if (!name || !description || !paid) {
+      return res.status(400).send('Name, description and price are required');
+    }
+
+    const course = await Course.findOneAndUpdate(
+      filterParams,
+      {
+        ...req.body,
+        paid: paid === 'true',
+        price: paid === 'true' ? parseFloat(price) : 0,
+        image: image ?? null,
+      },
+      {
+        new: true,
+      }
+    ).exec();
+
+    return res.status(201).send({ ok: true, course });
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error. Try again.');
+  }
+};
+
 export const getCourseBySlug = async (req: ReqWithUser, res: ResWithUserRoles) => {
   try {
     const course = await Course.findOne({
