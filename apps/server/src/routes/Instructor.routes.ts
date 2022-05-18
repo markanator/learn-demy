@@ -12,7 +12,12 @@ const router = express.Router();
 
 router.post('/apply', requireAuth, applyForInstructor);
 router.get('/account-status', requireAuth, getAccountStatus);
-router.get('/current-instructor', requireAuth, currentInstructor);
+router.get(
+  '/current-instructor',
+  requireAuth,
+  checkRoleMW('Instructor', 'Admin'),
+  currentInstructor
+);
 router.get('/my-courses', requireAuth, checkRoleMW('Instructor', 'Admin'), instructorCourses);
 
 

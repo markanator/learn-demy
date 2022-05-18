@@ -16,6 +16,7 @@ export const checkRoleMW =
         return res.status(403).send('Forbidden');
       }
 
+      res.locals.userRoles = user.role;
       return next();
     } catch (error) {
       console.error(error);

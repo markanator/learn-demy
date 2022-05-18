@@ -1,5 +1,5 @@
 import type { Response } from 'express';
-import type { File, ReqWithUser, ReqWithUserAndFormData } from '../app/types';
+import type { File, ReqWithUser, ReqWithUserAndFormData, ResWithUserRoles } from '../app/types';
 import slugify from 'slugify';
 import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
@@ -172,7 +172,7 @@ export const createCourse = async (req: ReqWithUser, res: Response) => {
   }
 };
 
-export const getCourseBySlug = async (req: ReqWithUser, res: Response) => {
+export const getCourseBySlug = async (req: ReqWithUser, res: ResWithUserRoles) => {
   try {
     const course = await Course.findOne({
       slug: req.params.slug,
@@ -182,6 +182,14 @@ export const getCourseBySlug = async (req: ReqWithUser, res: Response) => {
 
     if (!course) {
       return res.status(404).send('Course not found');
+    }
+    // check if resourceOwner is the same as the authenticated user
+    if (
+      !res.locals.userRoles.includes('Admin') &&
+      (course.instructor as unknown as { _id: string; name: string })._id.toString() !==
+        req.auth._id.toString()
+    ) {
+      return res.status(403).send('You are not authorized to view this course');
     }
 
     return res.status(200).json(course);

@@ -119,6 +119,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
     if (!email) {
       return res.status(400).send('Email is required');
     }
+
+    // TODO: have user verify their email before using SES
+
     const shortCode = nanoid(8).toUpperCase();
     const dbUser = await User.findOneAndUpdate<IUser>(
       { email },
@@ -175,6 +178,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
 export const resetPassword = async (req: ReqWithUser, res: Response) => {
   try {
     const { email, code, newPassword } = req.body;
+    if (!email || !code || !newPassword) {
+      return res.status(400).send('Missing fields (email, code, password). Try again.');
+    }
 
     const hashedPassword = await hashPassword(newPassword);
     const updatedUser = await User.findOneAndUpdate<IUser>(
