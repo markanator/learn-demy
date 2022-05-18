@@ -1,46 +1,94 @@
-// import Image from 'next/image';
-import React from 'react';
-import {
-  Button,
-  Form,
-  Row,
-  Col,
-  InputGroup,
-  Badge,
-  Image,
-} from 'react-bootstrap';
+import { Course, IS3Image } from '../../types';
+import React, { useState } from 'react';
+import { Button, Form, Row, Col, InputGroup, Badge, Image } from 'react-bootstrap';
+import FileResizer from 'react-image-file-resizer';
+import { toast } from 'react-toastify';
+import { createCourse, removeInitialImage, uploadImageToS3 } from '../../async/api/courses';
+import { useRouter } from 'next/router';
 
 type Props = {
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  values: {
-    name: string;
-    description: string;
-    price: string;
-    uploading: boolean;
-    paid: string;
-    loading: boolean;
-    category: string;
-  };
-  handleChange: (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => void;
-  handleImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleRemove: (e: React.MouseEvent<HTMLInputElement>) => void;
-  imgPreview?: string;
-  uploadButtonText?: string;
+  course?: Course;
+  isEditing?: boolean;
 };
 
-const CourseCreateForm = ({
-  handleSubmit,
-  values,
-  handleChange,
-  handleImage,
-  imgPreview,
-  uploadButtonText,
-  handleRemove,
-}: Props) => {
+const initialState = {
+  name: '',
+  description: '',
+  price: 9.99,
+  paid: '',
+  category: '',
+  loading: false,
+};
+
+const CourseCreateForm = ({ course, isEditing = false }: Props) => {
+  const router = useRouter();
+  const [values, setValues] = useState(
+    { ...course, paid: course?.paid.toString(), loading: false } ?? initialState
+  );
+  const [image, setImage] = useState<IS3Image>(course?.image ?? undefined);
+  const [imgPreview, setImgPreview] = useState(course?.image?.Location ?? '');
+  const [uploadButtonText, setUploadButtonText] = useState<'Image Upload' | string>('Image Upload');
+
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handleImage = (event) => {
+    event.preventDefault();
+    setValues({ ...values, loading: true });
+    const file = event.target.files[0];
+    if (file) {
+      setImgPreview(window.URL.createObjectURL(file));
+      setUploadButtonText(file.name);
+
+      // resize
+      FileResizer.imageFileResizer(file, 1280, 720, 'JPEG', 100, 0, async (uri) => {
+        try {
+          const { data } = await uploadImageToS3({ image: uri as string });
+          setImage(data as IS3Image);
+          toast.success('Image uploaded successfully');
+        } catch (error) {
+          console.warn(error?.message);
+          toast.error('Image uploaded failed. Please try again');
+        } finally {
+          setValues({ ...values, loading: false });
+        }
+      });
+    }
+  };
+
+  const handleRemove = async (e) => {
+    e.preventDefault();
+    setValues({ ...values, loading: true });
+
+    try {
+      await removeInitialImage(image);
+      setImgPreview('');
+      setImage(undefined);
+      setUploadButtonText('Image Upload');
+    } catch (error) {
+      console.warn(error?.message);
+      toast.error('Image uploaded failed. Please try again');
+    } finally {
+      setValues({ ...values, loading: false });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setValues({ ...values, loading: true });
+    try {
+      await createCourse({ ...values, image });
+      toast.success('Course created successfully. Redirecting to courses page');
+      router.push('/instructor');
+      setValues(initialState);
+    } catch (error) {
+      console.warn(error?.message);
+      toast.error('Image uploaded failed. Please try again');
+    } finally {
+      setValues({ ...values, loading: false });
+    }
+  };
   return (
     <Form onSubmit={handleSubmit} className="form">
       <Form.Group className="mb-3">
@@ -95,6 +143,7 @@ const CourseCreateForm = ({
                 pattern="^\d+(\.|\,)\d{2}$"
                 required
                 aria-label="Dollar amount (with dot and two decimal places)"
+                value={values.price}
                 onChange={handleChange}
               />
             </InputGroup>
@@ -131,30 +180,45 @@ const CourseCreateForm = ({
         </Col>
         {imgPreview && (
           <Col className="position-relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <Badge
-              pill
-              onClick={handleRemove}
-              className="position-absolute cursor-pointer"
-              style={{ top: '-5px', left: '0px', cursor: 'pointer' }}
-            >
-              X
-            </Badge>
-            <Image
-              src={imgPreview}
-              alt="iamge preview"
-              className="img"
-              style={{ objectFit: 'cover' }}
-              height={100}
-              width="auto"
-            />
+            <Row className="position-relative">
+              <Col>
+                <Badge
+                  pill
+                  onClick={handleRemove}
+                  className="position-absolute cursor-pointer"
+                  style={{ top: '-5px', left: '0px', cursor: 'pointer' }}
+                >
+                  X
+                </Badge>
+                <Image
+                  src={imgPreview}
+                  alt="iamge preview"
+                  className="img"
+                  style={{ objectFit: 'cover' }}
+                  height={100}
+                  width="auto"
+                />
+              </Col>
+              <Col>
+                {isEditing && image && (
+                  <Image
+                    src={image?.Location}
+                    alt="imge preview"
+                    className="img"
+                    style={{ objectFit: 'cover' }}
+                    height={100}
+                    width="auto"
+                  />
+                )}
+              </Col>
+            </Row>
           </Col>
         )}
       </Row>
 
       <Row>
         <Col>
-          <Button type="submit" disabled={values.loading || values.uploading}>
+          <Button type="submit" disabled={values.loading}>
             {values.loading ? 'Saving...' : 'Save & Continue'}
           </Button>
         </Col>
