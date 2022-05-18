@@ -22,7 +22,7 @@ const InstructorHomePage = () => {
           <Card key={course._id} className="overflow-hidden mt-4">
             <Row className="">
               <Col md={3} className="">
-                <Link href={`/instructor/course/view/${course.slug}`}>
+                <Link href={`/instructor/course/${course.slug}`} passHref>
                   <a>
                     <Card.Img
                       className="p-0 m-0"
@@ -41,7 +41,7 @@ const InstructorHomePage = () => {
               </Col>
               <Col md={8} className="">
                 <div className="py-2">
-                  <Link href={`/instructor/course/view/${course.slug}`}>
+                  <Link href={`/instructor/course/${course.slug}`} passHref>
                     <a>
                       <Card.Title className="text-capitalize">{course.name}</Card.Title>
                     </a>

@@ -95,10 +95,11 @@ export interface IS3Image {
 }
 
 export type Lesson = {
+  _id: string;
   title: string;
   slug: string;
-  content: Record<string, unknown>;
-  video_link: Record<string, unknown>;
+  content?: string;
+  video?: IS3Image;
   free_preview: boolean;
 };
 

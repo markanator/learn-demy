@@ -6,8 +6,9 @@ import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { ProtectedInstructorPage } from '../../../../components/ProtectedPages/InstructorRoutes';
 import { useCourseBySlug } from '../../../../async/rq/courses';
 import AddLessonForm from '../../../../components/Instructors/courseForms/AddLessonForm';
+import Link from 'next/link';
 
-const ViewCourseById = () => {
+const ViewCourseToEdit = (props) => {
   const router = useRouter();
   const { courseSlug } = router.query;
   const [openLessonModal, setOpenLessonModal] = useState(false);
@@ -20,6 +21,7 @@ const ViewCourseById = () => {
     <ProtectedInstructorPage>
       {course && (
         <Container fluid className="">
+          {/* TOP ROW */}
           <Row>
             <Card key={course._id} className="overflow-hidden mt-4 ps-0">
               <Row className="px-0 mx-0 w-100">
@@ -45,12 +47,17 @@ const ViewCourseById = () => {
                   md={1}
                   className="py-2 d-flex flex-column justify-content-start align-items-center"
                 >
-                  <Button className="mb-2 w-100">Edit</Button>
+                  <Link href={`${courseSlug}/edit`} passHref>
+                    <Button as="a" className="mb-2 w-100">
+                      Edit
+                    </Button>
+                  </Link>
                   <Button className="mb-0 w-100">Publish</Button>
                 </Col>
               </Row>
             </Card>
           </Row>
+          {/* DESCRIPTION */}
           <Row className="mt-4">
             <Col md={12} className="card py-2" style={{ maxHeight: '350px', overflowY: 'scroll' }}>
               <Card.Subtitle className="text-capitalize text-secondary mb-2">
@@ -68,10 +75,20 @@ const ViewCourseById = () => {
               />
             </Col>
           </Row>
+          <Row className="mt-4 pb-4">
+            <Col>
+              <h5>{course?.lessons.length} Lessons</h5>
+              <ol>
+                {course?.lessons.map((lesson) => (
+                  <li key={lesson._id}>{lesson.title}</li>
+                ))}
+              </ol>
+            </Col>
+          </Row>
         </Container>
       )}
     </ProtectedInstructorPage>
   );
 };
 
-export default ViewCourseById;
+export default ViewCourseToEdit;
