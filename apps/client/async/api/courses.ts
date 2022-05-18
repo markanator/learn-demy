@@ -14,6 +14,10 @@ export const createCourse = async (data: Record<string, unknown>) => {
   return axios.post('/courses', data);
 };
 
+export const udpateCourse = async (data: Record<string, unknown>) => {
+  return axios.put('/courses', data);
+};
+
 export const getCourseBySlug = async (slug: string): Promise<AxiosResponse<Course, Error>> => {
   return axios.get(`/courses/${slug}`);
 };

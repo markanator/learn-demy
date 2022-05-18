@@ -3,7 +3,12 @@ import React, { useState } from 'react';
 import { Button, Form, Row, Col, InputGroup, Badge, Image } from 'react-bootstrap';
 import FileResizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
-import { createCourse, removeInitialImage, uploadImageToS3 } from '../../async/api/courses';
+import {
+  createCourse,
+  removeInitialImage,
+  udpateCourse,
+  uploadImageToS3,
+} from '../../async/api/courses';
 import { useRouter } from 'next/router';
 
 type Props = {
@@ -89,8 +94,19 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
       setValues({ ...values, loading: false });
     }
   };
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await udpateCourse({ ...values, image });
+      console.log('updatedCourse', data);
+      toast.success('Course updated successfully');
+    } catch (error) {
+      console.warn(error?.message);
+      toast.error('Image uploaded failed. Please try again');
+    }
+  };
   return (
-    <Form onSubmit={handleSubmit} className="form">
+    <Form onSubmit={!isEditing ? handleSubmit : handleUpdate} className="form">
       <Form.Group className="mb-3">
         <input
           type="text"
