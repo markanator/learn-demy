@@ -24,7 +24,8 @@ export const createCourse = async (data: Record<string, unknown>) => {
   return axios.post('/courses', data);
 };
 
-export const udpateCourse = async (slug: string, data: Record<string, any>) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateCourse = async ({ slug, data }: { slug: string; data: Record<string, any> }) => {
   return axios.put(`/courses/${slug}`, data);
 };
 
@@ -37,6 +38,12 @@ export const addLessonToCourse = async (slug: string, data: Record<string, unkno
   return axios.post(`/courses/${slug}/lessons`, data);
 };
 
-export const deleteLessonFromCourse = async (slug: string, lessonId: string) => {
+export const deleteLessonFromCourse = async ({
+  slug,
+  lessonId,
+}: {
+  slug: string;
+  lessonId: string;
+}) => {
   return axios.delete(`/courses/${slug}/lessons/${lessonId}`);
 };

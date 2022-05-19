@@ -1,17 +1,18 @@
-import { Course, IS3Image } from '../../types';
-import React, { useState } from 'react';
+import { Course, IS3Image, Lesson } from '../../types';
+import React, { useCallback, useState } from 'react';
 import { Button, Form, Row, Col, InputGroup, Badge, Image } from 'react-bootstrap';
 import FileResizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
-import {
-  createCourse,
-  removeInitialImage,
-  udpateCourse,
-  uploadImageToS3,
-} from '../../async/api/courses';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import RearrangeLessons from './courseForms/ReArrangeLessons';
+import UpdateLessonModal from './courseForms/UpdateLessonModal';
+import {
+  useCreateCourseMutation,
+  useRemoveImageMutation,
+  useUpdateCourseMutation,
+  useUploadImageMutation,
+} from '../../async/rq/courses';
 
 type Props = {
   course?: Course;
@@ -45,6 +46,28 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
   const [image, setImage] = useState<IS3Image>(course?.image ?? undefined);
   const [imgPreview, setImgPreview] = useState(course?.image?.Location ?? '');
   const [uploadButtonText, setUploadButtonText] = useState<'Image Upload' | string>('Image Upload');
+  // edit lessons state
+  const [isEditLessonModalOpen, setIsEditLessonModalOpen] = useState(false);
+  const [currentLessonToEdit, setCurrentLessonToEdit] = useState<Lesson>(null);
+
+  // RQ
+  const { mutateAsync: uploadImageToS3 } = useUploadImageMutation();
+  const { mutateAsync: removeInitialImage } = useRemoveImageMutation();
+  const { mutateAsync: createCourse } = useCreateCourseMutation();
+  const { mutateAsync: updateCourse } = useUpdateCourseMutation();
+
+  const openEditLessonModal = useCallback(
+    (lesson: Lesson) => () => {
+      setCurrentLessonToEdit(lesson);
+      setIsEditLessonModalOpen(true);
+    },
+    []
+  );
+
+  const closeEditLessonModal = useCallback(() => {
+    setIsEditLessonModalOpen(false);
+    setCurrentLessonToEdit(null);
+  }, []);
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -107,6 +130,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleUpdate = async (e?: any) => {
     e?.preventDefault();
     if (!isEditing || !course?.slug) {
@@ -114,7 +138,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
     }
     setIsLoading(true);
     try {
-      const { data } = await udpateCourse(course?.slug, { ...values, image });
+      const { data } = await updateCourse({ slug: course?.slug, data: { ...values, image } });
       if (data?.course) {
         console.log('updatedCourse', data?.course);
         setValues(data.course);
@@ -260,7 +284,19 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
         </Row>
       </Form>
       {isEditing && values?.lessons?.length && (
-        <RearrangeLessons values={values} setValues={setValues} afterChange={handleUpdate} />
+        <>
+          <RearrangeLessons
+            values={values}
+            setValues={setValues}
+            afterChange={handleUpdate}
+            openEditLessonModal={openEditLessonModal}
+          />
+          <UpdateLessonModal
+            isOpen={isEditLessonModalOpen}
+            handleClose={closeEditLessonModal}
+            currentLessonToEdit={currentLessonToEdit}
+          />
+        </>
       )}
     </>
   );
