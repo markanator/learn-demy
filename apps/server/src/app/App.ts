@@ -11,6 +11,7 @@ import AuthRoutes from '../routes/auth.routes';
 import InstructorRoutes from '../routes/Instructor.routes';
 import CourseRoutes from '../routes/course.routes';
 import { __prod__ } from '../utils/env.utils';
+import { developmentErrors, errorHandler, notFoundHandler } from '../utils/routeErrorChecks';
 
 config();
 
@@ -42,5 +43,14 @@ app.get('/csrf-token', (req, res) =>
     csrfToken: req.csrfToken(),
   })
 );
+
+// 404
+app.use(notFoundHandler);
+// error handler
+if (!__prod__) {
+  app.use(developmentErrors);
+} else {
+  app.use(errorHandler);
+}
 
 export default app;
