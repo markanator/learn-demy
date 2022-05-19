@@ -89,6 +89,7 @@ export const currentInstructor = async (req: ReqWithUser, res: Response) => {
     } else if (!user?.role.includes('Instructor')) {
       return res.status(403).send('Not Authorized.');
     }
+    console.log({ email: user.email });
     res.status(200).json({ ok: true });
   } catch (error) {
     console.warn(error?.message);

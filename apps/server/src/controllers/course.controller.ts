@@ -22,7 +22,7 @@ const awsConfig: S3.ClientConfiguration = {
 const s3Client = new S3(awsConfig);
 
 // ************************************************************************
-// *************************** IMAGES *************************************
+// *************************** S3 *************************************
 // ************************************************************************
 
 export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
@@ -60,34 +60,6 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
   }
 };
 
-export const removeImageFromS3 = async (req: ReqWithUser, res: Response) => {
-  try {
-    const { Bucket, Key } = req.body;
-
-    if (!Bucket || !Key) {
-      return res.status(400).send('Bucket and Key is required');
-    }
-    const params: S3.DeleteObjectRequest = {
-      Bucket,
-      Key,
-    };
-    // send remove request to s3
-    s3Client.deleteObject(params, (err) => {
-      if (err) {
-        console.warn('Error deleting image: ', err?.message);
-        return res.status(500).send(err?.message);
-      }
-      return res.status(200).send({ ok: true });
-    });
-  } catch (error) {
-    console.error(error?.message);
-    return res.status(500).send('Error. Try again.');
-  }
-};
-
-// ************************************************************************
-// *************************** VIDEOS *************************************
-// ************************************************************************
 export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: ResWithUserRoles) => {
   try {
     const { video } = req.files;
@@ -117,7 +89,8 @@ export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: ResWithU
     return res.status(500).send('Error. Try again.');
   }
 };
-export const removeVideoFromS3 = async (req: ReqWithUser, res: ResWithUserRoles) => {
+
+export const removeFromS3 = async (req: ReqWithUser, res: Response) => {
   try {
     const { Bucket, Key } = req.body;
 
@@ -131,7 +104,7 @@ export const removeVideoFromS3 = async (req: ReqWithUser, res: ResWithUserRoles)
     // send remove request to s3
     s3Client.deleteObject(params, (err) => {
       if (err) {
-        console.warn('Error deleting VIDEO: ', err?.message);
+        console.warn('Error deleting image: ', err?.message);
         return res.status(500).send(err?.message);
       }
       return res.status(200).send({ ok: true });
@@ -248,6 +221,10 @@ export const getCourseBySlug = async (req: ReqWithUser, res: ResWithUserRoles) =
   }
 };
 
+// ************************************************************************
+// *************************** Lessons ************************************
+// ************************************************************************
+
 export const addLessonToCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
   try {
     const instructorId = req.auth._id;
@@ -285,5 +262,33 @@ export const addLessonToCourse = async (req: ReqWithUser, res: ResWithUserRoles)
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error, add lesson failed. Try again.');
+  }
+};
+
+export const deleteLessonFromCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
+  try {
+    const isAdmin = res.locals.userRoles.includes('Admin');
+    const { slug, lessonId } = req.params;
+
+    const filterParams = isAdmin ? { slug } : { slug, instructor: req.auth._id };
+    const course = await Course.findOne(filterParams).populate('instructor', '_id').exec();
+
+    if (!course) {
+      return res.status(404).send('Course not found');
+    } else if (
+      !isAdmin &&
+      (course?.instructor as unknown as { _id: string })._id.toString() !== req.auth._id.toString()
+    ) {
+      return res.status(403).send('You are not authorized to perform this action.');
+    }
+
+    await Course.findOneAndUpdate(filterParams, {
+      $pull: { lessons: { _id: lessonId } },
+    }).exec();
+
+    return res.status(200).send({ ok: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Error, delete lesson failed. Try again.');
   }
 };
