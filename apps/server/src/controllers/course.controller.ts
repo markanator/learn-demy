@@ -195,7 +195,8 @@ export const updateCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
     // console.log({ filterParams, alreadyExists });
     // return res.status(200).send({ ok: true });
     const { name, description, paid, price, image } = req.body;
-    if (!name || !description || !paid) {
+    if (!name || !description || (paid && !price)) {
+      console.log({ name, description, paid, price });
       return res.status(400).send('Name, description and price are required');
     }
 
@@ -209,6 +210,7 @@ export const updateCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
       },
       {
         new: true,
+        // TODO: figure out lessons sort order sorting
       }
     ).exec();
 

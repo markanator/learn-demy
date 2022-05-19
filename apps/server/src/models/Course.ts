@@ -16,6 +16,11 @@ const lessonSchema = new mongoose.Schema<Lesson>(
       type: String,
       lowercase: true,
     },
+    sortOrder: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
     content: {
       type: String,
       minlength: 200,

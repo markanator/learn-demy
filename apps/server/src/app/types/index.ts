@@ -17,6 +17,7 @@ export type Lesson = {
   content: string;
   video: Record<string, unknown>;
   free_preview: boolean;
+  sortOrder: number;
 };
 
 export type Course = {

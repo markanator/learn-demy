@@ -66,6 +66,7 @@ const ViewCourseToEdit = (props) => {
               <ReactMarkdown>{course?.description}</ReactMarkdown>
             </Col>
           </Row>
+          {/* LESSONS */}
           <Row className="mt-4">
             <Col>
               <Button onClick={partial(setOpenLessonModal, true)}>Add Lesson</Button>
