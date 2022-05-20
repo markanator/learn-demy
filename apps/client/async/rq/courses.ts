@@ -4,6 +4,7 @@ import {
   deleteLessonFromCourse,
   getCourseBySlug,
   removeInitialImage,
+  toggleCoursePublished,
   updateCourse,
   uploadImageToS3,
 } from '../api/courses';
@@ -54,6 +55,15 @@ export const useCreateCourseMutation = () => {
 export const useUpdateCourseMutation = () => {
   const client = useQueryClient();
   return useMutation(updateCourse, {
+    onSuccess: () => {
+      client.invalidateQueries(COURSE_BY_SLUG_KEY);
+    },
+  });
+};
+
+export const useToggleCoursePublishedMutation = () => {
+  const client = useQueryClient();
+  return useMutation(toggleCoursePublished, {
     onSuccess: () => {
       client.invalidateQueries(COURSE_BY_SLUG_KEY);
     },

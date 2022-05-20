@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
-import { Alert, Card, Col, Row } from 'react-bootstrap';
+import { Alert, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { useInstructorAuthoredCourses } from '../../async/rq/instructors';
 import { ProtectedInstructorPage } from '../../components/ProtectedPages/InstructorRoutes';
 import { Course } from '../../types';
@@ -64,11 +65,26 @@ const InstructorHomePage = () => {
                   )}
                 </div>
               </Col>
-              <Col
-                md={1}
-                className="d-flex flex-column justify-content-center align-items-center ps-0"
-              >
-                {course.published ? 't' : 'f'}
+              <Col md={1} className="d-flex flex-column justify-content-center align-items-center ps-0 fs-2">
+                {course.published ? (
+                  <OverlayTrigger
+                    placement="left"
+                    overlay={<Tooltip id={'publish-tooltip'}>Successfully published</Tooltip>}
+                  >
+                    <span className="text-success">
+                      <AiOutlineCheckCircle />
+                    </span>
+                  </OverlayTrigger>
+                ) : (
+                  <OverlayTrigger
+                    placement="left"
+                    overlay={<Tooltip id={'not-publish-tooltip'}>Course not published</Tooltip>}
+                  >
+                    <span className="text-danger">
+                      <AiOutlineCloseCircle />
+                    </span>
+                  </OverlayTrigger>
+                )}
               </Col>
             </Row>
           </Card>

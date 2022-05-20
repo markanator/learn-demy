@@ -33,6 +33,10 @@ export const getCourseBySlug = async (courseSlug: string): Promise<AxiosResponse
   return axios.get(`/courses/${courseSlug}`);
 };
 
+export const toggleCoursePublished = async ({ courseId, value }: { courseId: string; value: boolean }) => {
+  return axios.put(`/courses/${courseId}/publish/${value}`);
+};
+
 //* LESSONS
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const addLessonToCourse = async ({ courseSlug, data }: { courseSlug: string; data: Record<string, any> }) => {

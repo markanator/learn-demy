@@ -104,7 +104,7 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
   const handleAddLesson = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await addLessonToCourse({ slug: courseSlug as string, data: newLessonValues });
+      const { data } = await addLessonToCourse({ courseSlug: courseSlug as string, data: newLessonValues });
       console.info('success', data);
       handleClouseOut();
       toast.success('Lesson added successfully');

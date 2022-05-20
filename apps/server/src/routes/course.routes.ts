@@ -9,6 +9,7 @@ import {
   addLessonToCourse,
   deleteLessonFromCourse,
   updateLessonInCourse,
+  toggleCoursePublished,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -20,18 +21,13 @@ const router = express.Router();
 router.post('/upload-image', requireAuth, checkRoleMW('Instructor', 'Admin'), uploadImageToS3);
 router.post('/remove-image', requireAuth, checkRoleMW('Instructor', 'Admin'), removeFromS3);
 // VIDEOS
-router.post(
-  '/upload-video',
-  requireAuth,
-  checkRoleMW('Instructor', 'Admin'),
-  formMiddleWare,
-  uploadVideoToS3
-);
+router.post('/upload-video', requireAuth, checkRoleMW('Instructor', 'Admin'), formMiddleWare, uploadVideoToS3);
 router.post('/remove-video', requireAuth, checkRoleMW('Instructor', 'Admin'), removeFromS3);
 // COURSES
 router.get('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), getCourseBySlug);
 router.post('/', requireAuth, checkRoleMW('Instructor', 'Admin'), createCourse);
 router.put('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), updateCourse);
+router.put('/:courseId/publish/:toggleValue', requireAuth, checkRoleMW('Instructor', 'Admin'), toggleCoursePublished);
 
 // LESSONS
 router.post('/:slug/lessons', requireAuth, checkRoleMW('Instructor', 'Admin'), addLessonToCourse);

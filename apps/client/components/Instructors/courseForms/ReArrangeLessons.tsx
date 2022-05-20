@@ -1,5 +1,5 @@
 import type { Lesson } from '../../../types';
-import { isEqual, throttle } from 'lodash';
+import { throttle } from 'lodash';
 import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
