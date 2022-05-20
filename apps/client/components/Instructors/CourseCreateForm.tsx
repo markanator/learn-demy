@@ -1,5 +1,5 @@
 import { Course, IS3Image, Lesson } from '../../types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Form, Row, Col, InputGroup, Badge, Image } from 'react-bootstrap';
 import FileResizer from 'react-image-file-resizer';
 import { toast } from 'react-toastify';
@@ -55,6 +55,29 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
   const { mutateAsync: removeInitialImage } = useRemoveImageMutation();
   const { mutateAsync: createCourse } = useCreateCourseMutation();
   const { mutateAsync: updateCourse } = useUpdateCourseMutation();
+
+  useEffect(() => {
+    if (course) {
+      const tempCourse: SlimCourse = {
+        lessons: course.lessons,
+        name: course.name,
+        description: course.description,
+        price: course.price,
+        paid: course.paid.toString(),
+        category: course.category,
+        image: course.image,
+      };
+      if (tempCourse !== values) {
+        setValues({
+          ...course,
+          paid: course?.paid.toString(),
+        });
+      }
+      return;
+    }
+    return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course]);
 
   const openEditLessonModal = useCallback(
     (lesson: Lesson) => () => {
@@ -138,7 +161,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
     }
     setIsLoading(true);
     try {
-      const { data } = await updateCourse({ slug: course?.slug, data: { ...values, image } });
+      const { data } = await updateCourse({ courseSlug: course?.slug, data: { ...values, image } });
       if (data?.course) {
         console.log('updatedCourse', data?.course);
         setValues(data.course);

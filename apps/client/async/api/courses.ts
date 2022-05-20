@@ -25,26 +25,33 @@ export const createCourse = async (data: Record<string, unknown>) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateCourse = async ({ slug, data }: { slug: string; data: Record<string, any> }) => {
-  return axios.put(`/courses/${slug}`, data);
+export const updateCourse = async ({ courseSlug, data }: { courseSlug: string; data: Record<string, any> }) => {
+  return axios.put(`/courses/${courseSlug}`, data);
 };
 
-export const getCourseBySlug = async (slug: string): Promise<AxiosResponse<Course, Error>> => {
-  return axios.get(`/courses/${slug}`);
+export const getCourseBySlug = async (courseSlug: string): Promise<AxiosResponse<Course, Error>> => {
+  return axios.get(`/courses/${courseSlug}`);
 };
 
 //* LESSONS
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const addLessonToCourse = async ({ slug, data }: { slug: string; data: Record<string, any> }) => {
-  return axios.post(`/courses/${slug}/lessons`, data);
+export const addLessonToCourse = async ({ courseSlug, data }: { courseSlug: string; data: Record<string, any> }) => {
+  return axios.post(`/courses/${courseSlug}/lessons`, data);
 };
 
-export const deleteLessonFromCourse = async ({
-  slug,
+export const updateLesson = async ({
+  courseSlug,
   lessonId,
+  data,
 }: {
-  slug: string;
+  courseSlug: string;
   lessonId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: Record<string, any>;
 }) => {
-  return axios.delete(`/courses/${slug}/lessons/${lessonId}`);
+  return axios.put(`/courses/${courseSlug}/lessons/${lessonId}`, data);
+};
+
+export const deleteLessonFromCourse = async ({ courseSlug, lessonId }: { courseSlug: string; lessonId: string }) => {
+  return axios.delete(`/courses/${courseSlug}/lessons/${lessonId}`);
 };

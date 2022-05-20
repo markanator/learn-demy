@@ -8,6 +8,7 @@ import {
   removeFromS3,
   addLessonToCourse,
   deleteLessonFromCourse,
+  updateLessonInCourse,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -34,6 +35,7 @@ router.put('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), updateCour
 
 // LESSONS
 router.post('/:slug/lessons', requireAuth, checkRoleMW('Instructor', 'Admin'), addLessonToCourse);
+router.put('/:slug/lessons/:lessonId', requireAuth, checkRoleMW('Instructor', 'Admin'), updateLessonInCourse);
 router.delete(
   '/:slug/lessons/:lessonId',
   requireAuth,

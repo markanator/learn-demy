@@ -62,8 +62,7 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
 
 export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: ResWithUserRoles) => {
   try {
-    const { video } = req.files;
-
+    const { file: video } = req.files;
     if (!video) {
       return res.status(400).send('Video is required');
     }
@@ -208,8 +207,7 @@ export const getCourseBySlug = async (req: ReqWithUser, res: ResWithUserRoles) =
     // check if resourceOwner is the same as the authenticated user
     if (
       !res.locals.userRoles.includes('Admin') &&
-      (course.instructor as unknown as { _id: string; name: string })._id.toString() !==
-        req.auth._id.toString()
+      (course.instructor as unknown as { _id: string; name: string })._id.toString() !== req.auth._id.toString()
     ) {
       return res.status(403).send('You are not authorized to view this course');
     }
@@ -259,6 +257,56 @@ export const addLessonToCourse = async (req: ReqWithUser, res: ResWithUserRoles)
       .exec();
 
     res.status(201).json(updatedCourse);
+  } catch (error) {
+    console.error(error?.message);
+    return res.status(500).send('Error, add lesson failed. Try again.');
+  }
+};
+
+export const updateLessonInCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
+  try {
+    // console.log('update lesson in course', req.body);
+    // return res.status(200).send({ ok: true });
+    const instructorId = req.auth._id;
+    const { slug, lessonId } = req.params;
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).send('Missing fields is required');
+    }
+
+    const course = await Course.findOne({ slug }).populate('instructor', '_id').exec();
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
+    // role check, needs to be Admin or course.instructor owner
+    if (
+      !res.locals.userRoles.includes('Admin') &&
+      (course.instructor as unknown as { _id: string })._id.toString() !== instructorId.toString()
+    ) {
+      return res.status(403).send('You are not authorized to add lessons to this course');
+    }
+
+    await Course.updateOne<TCourse>(
+      { 'lessons._id': lessonId }, // find course by lesson.id
+      {
+        $set: {
+          'lessons.$.content': req.body.content,
+          'lessons.$.free_preview': req.body.free_preview,
+          'lessons.$.title': req.body.title,
+          'lessons.$.sortOrder': req.body.sortOrder,
+          'lessons.$.video': req.body.video,
+        },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate('instructor', '_id name')
+      .exec();
+
+    const updated = await Course.findOne({ slug }).populate('instructor', '_id name').exec();
+
+    res.status(200).json({ ok: true, course: updated });
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error, add lesson failed. Try again.');

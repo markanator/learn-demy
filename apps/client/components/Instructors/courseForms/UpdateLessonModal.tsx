@@ -2,7 +2,9 @@ import { Lesson } from '../../../types';
 import React from 'react';
 import { Badge, Button, Col, Form, Modal, ProgressBar, Row } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
-import { removeVideoFromS3, uploadVideoToS3 } from '../../../async/api/courses';
+import { useRemoveVideoFromS3, useUpdateLesson, useUploadVideoToS3 } from '../../../async/rq/lessons';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 type Props = {
   isOpen: boolean;
@@ -12,50 +14,84 @@ type Props = {
 };
 
 const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurrentLessonToEdit }: Props) => {
+  const router = useRouter();
+  const { courseSlug } = router.query;
   const [uploadButtonText, setUploadButtonText] = React.useState<string>('Upload Video');
   const [progress, setProgress] = React.useState<number>(-1);
   const [isWorking, setIsWorking] = React.useState<boolean>(false);
 
+  const { mutateAsync: uploadVideoToS3 } = useUploadVideoToS3();
+  const { mutateAsync: removeVideoFromS3 } = useRemoveVideoFromS3();
+  const { mutateAsync: updateLesson } = useUpdateLesson();
+
   const handleUpdateLesson = async (event) => {
     event.preventDefault();
-    console.log(' handleUpdateLesson');
-  };
-  const handleUploadVideo = async (event) => {
-    if (currentLessonToEdit?.video?.Location) {
-      try {
-        setIsWorking(true);
-        const { data } = await removeVideoFromS3(currentLessonToEdit.video);
-        console.log('removed previous video', data);
-
-        const file = event.target.files[0];
-        setUploadButtonText(file.name);
-
-        const videoData = new FormData();
-        videoData.append('file', file);
-        videoData.append('course_id', currentLessonToEdit._id);
-
-        const { data: video } = await uploadVideoToS3(videoData, {
-          onUploadProgress: ({ loaded, total }) => {
-            // eslint-disable-next-line prefer-const
-            let percent = Math.round((100 * loaded) / total);
-            setProgress(percent);
-          },
-        });
-        console.log({ video });
-        setCurrentLessonToEdit({ ...currentLessonToEdit, video });
-      } catch (error) {
-        console.warn(error);
-      } finally {
-        setIsWorking(false);
-      }
+    try {
+      setIsWorking(true);
+      const { data } = await updateLesson({
+        courseSlug: courseSlug as string,
+        lessonId: currentLessonToEdit?._id,
+        data: currentLessonToEdit,
+      });
+      console.log(' handleUpdateLesson', data);
+      toast.success('Lesson updated successfully');
+    } catch (error) {
+      console.warn(error?.message);
+      toast.error('Lesson update failed');
+    } finally {
+      setUploadButtonText('Upload Video');
+      setIsWorking(false);
     }
   };
+
+  const handleUploadVideo = async (event) => {
+    try {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      setIsWorking(true);
+      if (currentLessonToEdit?.video?.Location) {
+        const { data } = await removeVideoFromS3(currentLessonToEdit.video);
+        console.log('removed previous video', data);
+      }
+
+      setUploadButtonText(file.name);
+
+      const data = new FormData();
+      data.append('file', file);
+      data.append('course_id', currentLessonToEdit._id);
+
+      const { data: video } = await uploadVideoToS3({
+        data,
+        config: {
+          onUploadProgress: ({ loaded, total }) => {
+            setProgress(Math.round((100 * loaded) / total));
+          },
+        },
+      });
+      console.log({ video });
+      setCurrentLessonToEdit({ ...currentLessonToEdit, video });
+      toast.success('Video uploaded successfully');
+    } catch (error) {
+      console.warn(error);
+      toast.error('Video upload failed');
+    } finally {
+      setProgress(-1);
+      setUploadButtonText('Upload Video');
+      setIsWorking(false);
+    }
+  };
+
   const handleChange = (e) => {
     setCurrentLessonToEdit({ ...currentLessonToEdit, [e.target.name]: e.target.value });
   };
+
   const handleSwitch = (e) => {
     setCurrentLessonToEdit({ ...currentLessonToEdit, [e.target.name]: e.target.checked });
   };
+
   return (
     <Modal show={isOpen} onHide={handleClose} s>
       <Modal.Header closeButton>
@@ -137,8 +173,6 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
               </Col>
             </Row>
           </Col>
-
-          <pre>{JSON.stringify(currentLessonToEdit || {}, null, 2)}</pre>
         </Row>
       </Modal.Body>
     </Modal>

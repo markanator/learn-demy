@@ -49,7 +49,7 @@ const RearrangeLessons = ({ setValues, values, afterChange, openEditLessonModal 
           const allLessons = values?.lessons?.filter(({ _id }) => _id !== lessonId);
           setValues({ ...values, lessons: allLessons });
 
-          const { data } = await deleteLessonFromCourse({ slug: courseSlug as string, lessonId });
+          const { data } = await deleteLessonFromCourse({ courseSlug: courseSlug as string, lessonId });
           console.log('removed lessons response', data);
         } catch (error) {
           setValues({ ...values, lessons: prevLessons });
