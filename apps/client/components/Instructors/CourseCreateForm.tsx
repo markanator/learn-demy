@@ -159,7 +159,6 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
     try {
       const { data } = await updateCourse({ courseSlug: course?.slug, data: { ...values, image } });
       if (data?.course) {
-        console.log('updatedCourse', data?.course);
         setValues(data.course);
         setImage(data.course?.image);
         setImgPreview(data.course?.image?.Location ?? '');

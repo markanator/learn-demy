@@ -33,7 +33,7 @@ const RearrangeLessons = ({ setValues, values, afterChange, openEditLessonModal 
       newLessonsArray.splice(source.index, 1);
       newLessonsArray.splice(destination.index, 0, sourceLesson);
       const updatedCourse = { ...values, lessons: newLessonsArray };
-      console.log('something change?', isEqual(updatedCourse.lessons, newLessonsArray));
+      // TODO: this is a hack to make sure the course is updated
       setValues(updatedCourse);
       throttle(afterChange, 500);
     },
@@ -45,12 +45,10 @@ const RearrangeLessons = ({ setValues, values, afterChange, openEditLessonModal 
       const prevLessons = Array.from(values?.lessons) || [];
       if (window.confirm('Are you sure you want to delete this lesson?')) {
         try {
-          console.log(' delete ', lessonId);
           const allLessons = values?.lessons?.filter(({ _id }) => _id !== lessonId);
           setValues({ ...values, lessons: allLessons });
 
-          const { data } = await deleteLessonFromCourse({ courseSlug: courseSlug as string, lessonId });
-          console.log('removed lessons response', data);
+          await deleteLessonFromCourse({ courseSlug: courseSlug as string, lessonId });
         } catch (error) {
           setValues({ ...values, lessons: prevLessons });
           console.warn(error?.message);

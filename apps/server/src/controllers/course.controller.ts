@@ -166,7 +166,6 @@ export const updateCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
 
     const { name, description, paid, price, image } = req.body;
     if (!name || !description || (paid && !price)) {
-      console.log({ name, paid, price });
       return res.status(400).send('Name, description and price are required');
     }
 
@@ -263,8 +262,6 @@ export const addLessonToCourse = async (req: ReqWithUser, res: ResWithUserRoles)
 
 export const updateLessonInCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
   try {
-    // console.log('update lesson in course', req.body);
-    // return res.status(200).send({ ok: true });
     const instructorId = req.auth._id;
     const { slug, lessonId } = req.params;
     const { title } = req.body;

@@ -28,12 +28,12 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
     event.preventDefault();
     try {
       setIsWorking(true);
-      const { data } = await updateLesson({
+      await updateLesson({
         courseSlug: courseSlug as string,
         lessonId: currentLessonToEdit?._id,
         data: currentLessonToEdit,
       });
-      console.log(' handleUpdateLesson', data);
+
       toast.success('Lesson updated successfully');
     } catch (error) {
       console.warn(error?.message);
@@ -53,8 +53,7 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
 
       setIsWorking(true);
       if (currentLessonToEdit?.video?.Location) {
-        const { data } = await removeVideoFromS3(currentLessonToEdit.video);
-        console.log('removed previous video', data);
+        await removeVideoFromS3(currentLessonToEdit.video);
       }
 
       setUploadButtonText(file.name);
@@ -71,7 +70,7 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
           },
         },
       });
-      console.log({ video });
+
       setCurrentLessonToEdit({ ...currentLessonToEdit, video });
       toast.success('Video uploaded successfully');
     } catch (error) {
