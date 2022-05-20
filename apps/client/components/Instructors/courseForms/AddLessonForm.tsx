@@ -1,9 +1,9 @@
+import { useAddLessonToCourse, useRemoveVideoFromS3, useUploadVideoToS3 } from '../../../async/rq/lessons';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 import { Button, Form, Modal, OverlayTrigger, ProgressBar, Tooltip } from 'react-bootstrap';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { toast } from 'react-toastify';
-import { addLessonToCourse, removeVideoFromS3, uploadVideoToS3 } from '../../../async/api/courses';
 import { IS3Image } from '../../../types';
 
 type Props = {
@@ -36,6 +36,10 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
   const [uploadVideoText, setUploadVideoText] = useState<'Upload Video' | string>('Upload Video');
   const [videoUploadProgress, setVideoUploadProgress] = useState(-1);
 
+  const { mutateAsync: addLessonToCourse } = useAddLessonToCourse();
+  const { mutateAsync: uploadVideoToS3 } = useUploadVideoToS3();
+  const { mutateAsync: removeVideoFromS3 } = useRemoveVideoFromS3();
+
   const handleClouseOut = () => {
     setOpenLessonModal(false);
     setIsLoading(false);
@@ -66,9 +70,7 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
         const videoFormData = new FormData();
         videoFormData.append('video', file);
         // save progress bar
-        const { data } = await uploadVideoToS3(videoFormData, {
-          onUploadProgress,
-        });
+        const { data } = await uploadVideoToS3({ data: videoFormData, config: { onUploadProgress } });
         // successful response
         setNewLessonValues({ ...newLessonValues, video: data });
         setVideoUploadProgress(-1);
@@ -100,10 +102,9 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
   };
 
   const handleAddLesson = async (e) => {
-    // TODO: submit to backend
     e.preventDefault();
     try {
-      const { data } = await addLessonToCourse(courseSlug as string, { ...newLessonValues });
+      const { data } = await addLessonToCourse({ slug: courseSlug as string, data: newLessonValues });
       console.info('success', data);
       handleClouseOut();
       toast.success('Lesson added successfully');
@@ -145,12 +146,7 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
 
           <Form.Group>
             {videoUploadProgress > -1 && videoUploadProgress < 100 && (
-              <ProgressBar
-                className="mb-2"
-                style={{ height: '10px' }}
-                animated
-                now={videoUploadProgress}
-              />
+              <ProgressBar className="mb-2" style={{ height: '10px' }} animated now={videoUploadProgress} />
             )}
             <div className="d-flex flex-row">
               <Form.Label className=" w-100 btn btn-outline-secondary btn-block text-left">

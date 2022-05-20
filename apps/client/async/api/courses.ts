@@ -11,7 +11,7 @@ export const removeInitialImage = async (data: IS3Image) => {
   return axios.post('/courses/remove-image', data);
 };
 
-export const uploadVideoToS3 = async (data: FormData, config?: AxiosRequestConfig<FormData>) => {
+export const uploadVideoToS3 = async ({ data, config }: { data: FormData; config?: AxiosRequestConfig<FormData> }) => {
   return axios.post(`/courses/upload-video`, data, config);
 };
 
@@ -34,7 +34,8 @@ export const getCourseBySlug = async (slug: string): Promise<AxiosResponse<Cours
 };
 
 //* LESSONS
-export const addLessonToCourse = async (slug: string, data: Record<string, unknown>) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const addLessonToCourse = async ({ slug, data }: { slug: string; data: Record<string, any> }) => {
   return axios.post(`/courses/${slug}/lessons`, data);
 };
 

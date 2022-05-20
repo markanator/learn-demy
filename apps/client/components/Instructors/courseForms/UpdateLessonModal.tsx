@@ -17,10 +17,14 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
   const [isWorking, setIsWorking] = React.useState<boolean>(false);
 
   const handleUpdateLesson = async (event) => {
+    event.preventDefault();
+    console.log(' handleUpdateLesson');
+  };
+  const handleUploadVideo = async (event) => {
     if (currentLessonToEdit?.video?.Location) {
       try {
         setIsWorking(true);
-        const { data } = await removeVideoFromS3(currentLessonToEdit?.video);
+        const { data } = await removeVideoFromS3(currentLessonToEdit.video);
         console.log('removed previous video', data);
 
         const file = event.target.files[0];
@@ -28,7 +32,7 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
 
         const videoData = new FormData();
         videoData.append('file', file);
-        videoData.append('course_id', currentLessonToEdit?._id);
+        videoData.append('course_id', currentLessonToEdit._id);
 
         const { data: video } = await uploadVideoToS3(videoData, {
           onUploadProgress: ({ loaded, total }) => {
@@ -45,9 +49,6 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
         setIsWorking(false);
       }
     }
-  };
-  const handleUploadVideo = () => {
-    console.log(' handle upload Video');
   };
   const handleChange = (e) => {
     setCurrentLessonToEdit({ ...currentLessonToEdit, [e.target.name]: e.target.value });
@@ -120,7 +121,7 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
                   name="free_preview"
                   // eslint-disable-next-line
                   // @ts-ignore
-                  value={currentLessonToEdit?.free_preview}
+                  value={String(currentLessonToEdit?.free_preview)}
                   onChange={handleSwitch}
                   size={12}
                   aria-label="Toggle is free previewable"
@@ -137,7 +138,7 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
             </Row>
           </Col>
 
-          <pre>{JSON.stringify(currentLessonToEdit, null, 2)}</pre>
+          <pre>{JSON.stringify(currentLessonToEdit || {}, null, 2)}</pre>
         </Row>
       </Modal.Body>
     </Modal>
