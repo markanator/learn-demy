@@ -1,11 +1,5 @@
-import type { Response } from 'express';
-import type {
-  Course as TCourse,
-  File,
-  ReqWithUser,
-  ReqWithUserAndFormData,
-  ResWithUserRoles,
-} from '../app/types';
+import type { Response, Request } from 'express';
+import type { Course as TCourse, File, ReqWithUser, ReqWithUserAndFormData, ResWithUserRoles } from '../app/types';
 import slugify from 'slugify';
 import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
@@ -20,6 +14,21 @@ const awsConfig: S3.ClientConfiguration = {
 };
 
 const s3Client = new S3(awsConfig);
+
+// ************************************************************************
+// *************************** PUBLIC *************************************
+// ************************************************************************
+
+export const getPublishedCourseList = async (req: Request, res: Response) => {
+  try {
+    const courses = await Course.find({ published: true })
+      .populate('instructor', '_id name picture')
+      .sort({ createdAt: -1 });
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // ************************************************************************
 // *************************** S3 *************************************

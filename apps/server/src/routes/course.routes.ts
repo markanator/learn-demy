@@ -10,6 +10,7 @@ import {
   deleteLessonFromCourse,
   updateLessonInCourse,
   toggleCoursePublished,
+  getPublishedCourseList,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -17,6 +18,15 @@ import { formMiddleWare } from '../middlewares/formidableMW';
 
 const router = express.Router();
 
+// ************************************************************************
+// *************************** Public *************************************
+// ************************************************************************
+
+router.get('/', getPublishedCourseList);
+
+// ************************************************************************
+// *************************** AUTH AND ROLES PROTECTED *******************
+// ************************************************************************
 // IMAGES
 router.post('/upload-image', requireAuth, checkRoleMW('Instructor', 'Admin'), uploadImageToS3);
 router.post('/remove-image', requireAuth, checkRoleMW('Instructor', 'Admin'), removeFromS3);
