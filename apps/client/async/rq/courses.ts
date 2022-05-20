@@ -1,16 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   createCourse,
-  deleteLessonFromCourse,
   getCourseBySlug,
+  getPublishedCourses,
   removeInitialImage,
   toggleCoursePublished,
   updateCourse,
   uploadImageToS3,
 } from '../api/courses';
+import { deleteLessonFromCourse } from '../api/lessons';
 import { INSTRUCTOR_COURSES_KEY } from './instructors';
 
+export const COURSES_KEY = 'courses';
 export const COURSE_BY_SLUG_KEY = 'course';
+
+export const usePublishedCourses = () => {
+  return useQuery([COURSES_KEY], async () => {
+    const { data } = await getPublishedCourses();
+    return data;
+  });
+};
 
 export const useCourseBySlug = (slug?: string) => {
   return useQuery(

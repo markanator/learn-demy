@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { addLessonToCourse, removeVideoFromS3, updateLesson, uploadVideoToS3 } from '../api/courses';
+import { removeVideoFromS3, uploadVideoToS3 } from '../api/courses';
+import { addLessonToCourse, updateLesson } from '../api/lessons';
 import { COURSE_BY_SLUG_KEY } from './courses';
 
 export const useAddLessonToCourse = () => {
