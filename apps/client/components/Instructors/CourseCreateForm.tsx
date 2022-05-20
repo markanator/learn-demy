@@ -23,15 +23,13 @@ const initialState = {
   name: '',
   description: '',
   price: 9.99,
-  paid: '',
+  paid: false,
   category: '',
   lessons: [],
   loading: false,
 };
 
-export type SlimCourse = Omit<Course, '_id' | 'slug' | 'published' | 'instructor' | 'paid'> & {
-  paid: string;
-};
+export type SlimCourse = Omit<Course, '_id' | 'slug' | 'published' | 'instructor'>;
 
 const CourseCreateForm = ({ course, isEditing = false }: Props) => {
   const router = useRouter();
@@ -39,7 +37,6 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
   const [values, setValues] = useState<SlimCourse>(
     (course && {
       ...course,
-      paid: course?.paid.toString(),
     }) ||
       initialState
   );
@@ -63,14 +60,13 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
         name: course.name,
         description: course.description,
         price: course.price,
-        paid: course.paid.toString(),
+        paid: course.paid,
         category: course.category,
         image: course.image,
       };
       if (tempCourse !== values) {
         setValues({
           ...course,
-          paid: course?.paid.toString(),
         });
       }
       return;
@@ -206,14 +202,20 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
         <Row>
           <Col>
             <Form.Group className="mb-3">
-              <Form.Select name="paid" style={{ width: '100%' }} value={values.paid} onChange={handleChange} required>
+              <Form.Select
+                name="paid"
+                style={{ width: '100%' }}
+                value={String(values.paid)}
+                onChange={handleChange}
+                required
+              >
                 <option>--- Select an option ---</option>
                 <option value={'true'}>Paid</option>
                 <option value={'false'}>Free</option>
               </Form.Select>
             </Form.Group>
           </Col>
-          {values.paid === 'true' && (
+          {values.paid && (
             <Col>
               <InputGroup className="mb-3">
                 <InputGroup.Text>$</InputGroup.Text>

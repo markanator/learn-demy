@@ -157,18 +157,16 @@ export const updateCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
     const filterParams = isAdmin ? { slug } : { slug, instructor: req.auth._id };
     const alreadyExists = await Course.findOne(filterParams).exec();
     if (!alreadyExists) {
-      return res.status(400).send('Course already exists');
+      return res.status(400).send('Course does not exist');
     }
     // check resource owner
     if (!isAdmin && alreadyExists.instructor.toString() !== req.auth._id.toString()) {
       return res.status(403).send('You are not authorized to view this course');
     }
 
-    // console.log({ filterParams, alreadyExists });
-    // return res.status(200).send({ ok: true });
     const { name, description, paid, price, image } = req.body;
     if (!name || !description || (paid && !price)) {
-      console.log({ name, description, paid, price });
+      console.log({ name, paid, price });
       return res.status(400).send('Name, description and price are required');
     }
 
