@@ -183,13 +183,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
         <Row>
           <Col>
             <Form.Group className="mb-3">
-              <Form.Select
-                name="paid"
-                style={{ width: '100%' }}
-                value={values.paid}
-                onChange={handleChange}
-                required
-              >
+              <Form.Select name="paid" style={{ width: '100%' }} value={values.paid} onChange={handleChange} required>
                 <option>--- Select an option ---</option>
                 <option value={'true'}>Paid</option>
                 <option value={'false'}>Free</option>
@@ -295,6 +289,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
             isOpen={isEditLessonModalOpen}
             handleClose={closeEditLessonModal}
             currentLessonToEdit={currentLessonToEdit}
+            setCurrentLessonToEdit={setCurrentLessonToEdit}
           />
         </>
       )}

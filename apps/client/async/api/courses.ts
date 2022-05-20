@@ -11,7 +11,7 @@ export const removeInitialImage = async (data: IS3Image) => {
   return axios.post('/courses/remove-image', data);
 };
 
-export const uploadVideoToS3 = async (data: FormData, config: AxiosRequestConfig<FormData>) => {
+export const uploadVideoToS3 = async (data: FormData, config?: AxiosRequestConfig<FormData>) => {
   return axios.post(`/courses/upload-video`, data, config);
 };
 
