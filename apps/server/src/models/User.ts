@@ -48,7 +48,7 @@ const userSchema = new Schema<IUser>(
     },
     bio: {
       type: String,
-      default: '/avatar.png',
+      required: false,
       maxlength: 256,
       minlength: 100,
     },
