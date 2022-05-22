@@ -5,7 +5,12 @@ import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
 import Course from '../models/Course';
 import { readFileSync } from 'fs';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.Stripe_SECRET_KEY, {
+  apiVersion: '2020-08-27',
+});
 
 const awsConfig: S3.ClientConfiguration = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -43,18 +48,75 @@ export const getPublishedCourse = async (req: Request, res: Response) => {
   }
 };
 
-export const freeEnrollUserToCourse = async (req: ReqWithUser, res: Response) => {
+export const userPurchaseCourse = async (req: ReqWithUser, res: Response) => {
+  try {
+    // ensure the course is paid
+    const course = await Course.findById(req.params.courseId).populate('instructor').exec();
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
+    if (!course?.paid) {
+      return res.status(400).send('Course is not paid');
+    }
+    const user = await User.findById(req.auth._id).exec();
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    const feeToInstructor = Math.round((course.price * 100 * 0.3) / 100);
+    // create stripe session
+    const courseImage = course?.image?.Location ? [course?.image?.Location as string] : [];
+    const session = await stripe.checkout.sessions.create({
+      // payment setup
+      payment_method_types: ['card'],
+      mode: 'payment',
+      // we can also map through the cart items
+      line_items: [
+        {
+          name: course.name,
+          images: courseImage,
+          currency: 'usd',
+          amount: Math.round(course.price * 100),
+          quantity: 1,
+        },
+      ],
+      payment_intent_data: {
+        // platform fee
+        application_fee_amount: Math.round(feeToInstructor * 100),
+        transfer_data: {
+          // final payout
+          destination: (course.instructor as unknown as IUser).stripe_account_id,
+        },
+      },
+      customer_email: user.email,
+      success_url: `${process.env.STRIPE_SUCCESS_URL}/${course?.id}`,
+      cancel_url: process.env.STRIPE_CANCEL_URL,
+    });
+
+    await User.findByIdAndUpdate(req.auth._id, {
+      stripeSession: session,
+    });
+
+    return res.status(200).send(session.url);
+  } catch (error) {
+    console.warn(error?.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const userFreeEnrollToCourse = async (req: ReqWithUser, res: Response) => {
   try {
     const { courseId } = req.params;
     const course = await Course.findById(courseId).exec();
     if (!course) {
       return res.status(404).send('Course not found');
-    } else if (course?.paid) {
+    }
+    if (course?.paid) {
       return res.status(400).send('You must purchase the course to enroll');
     }
 
     // update the user
-    const updateUser = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       req.auth._id,
       {
         $addToSet: { courses: course._id },
@@ -64,6 +126,41 @@ export const freeEnrollUserToCourse = async (req: ReqWithUser, res: Response) =>
 
     res.status(200).json({ message: 'User enrolled to course' });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const verifySuccessfulPurchase = async (req: ReqWithUser, res: Response) => {
+  try {
+    // check with stripe if the payment was successful
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).exec();
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
+    // get user from db to get stripe sessionId
+    const user = await User.findById(req.auth._id).exec();
+    if (!user?.stripeSession) {
+      return res.sendStatus(400);
+    }
+    // get stripe sessions
+    const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id as string);
+
+    if (session.payment_status !== 'paid') {
+      return res.sendStatus(400);
+    }
+    await User.findByIdAndUpdate(
+      req.auth._id,
+      {
+        $addToSet: { courses: course._id },
+        $set: { stripeSession: {} },
+      },
+      { new: true }
+    ).exec();
+
+    res.status(200).json({ slug: course.slug, ok: true });
+  } catch (error) {
+    console.warn(error?.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -80,7 +177,7 @@ export const checkCourseEnrollment = async (req: ReqWithUser, res: Response) => 
         break;
       }
     }
-    console.log({ isEnrolled });
+
     res.status(200).json(!!isEnrolled);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -298,7 +395,6 @@ export const toggleCoursePublished = async (req: ReqWithUser, res: ResWithUserRo
     }
 
     const published = toggleValue === 'true';
-    console.log({ published });
     const updatedCourse = await Course.findByIdAndUpdate(
       courseId,
       { published },

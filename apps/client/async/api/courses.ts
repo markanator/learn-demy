@@ -49,6 +49,14 @@ export const checkUserEnrollment = (courseId: string) => {
 };
 
 // enrollments
-export const enrollInFreeCourse = ({ courseId }: { courseId: string; }) => {
-  return axios.post(`/courses/${courseId}/free-enroll`);
-}
+export const enrollInFreeCourse = ({ courseId }: { courseId: string }) => {
+  return axios.post(`/courses/${courseId}/enroll/free`);
+};
+
+export const initiateCoursePurchase = ({ courseId }: { courseId: string }) => {
+  return axios.post(`/courses/${courseId}/enroll/purchase`);
+};
+
+export const validateStripePurchase = ({ courseId }: { courseId: string }) => {
+  return axios.get(`/courses/${courseId}/verify-purchase`);
+};

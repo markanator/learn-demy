@@ -13,7 +13,9 @@ import {
   getPublishedCourseList,
   getPublishedCourse,
   checkCourseEnrollment,
-  freeEnrollUserToCourse,
+  userFreeEnrollToCourse,
+  userPurchaseCourse,
+  verifySuccessfulPurchase,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -28,7 +30,9 @@ const router = express.Router();
 router.get('/', getPublishedCourseList);
 router.get('/:slug', getPublishedCourse);
 router.get('/:courseId/check-enrollment', requireAuth, checkCourseEnrollment);
-router.post('/:courseId/free-enroll', requireAuth, freeEnrollUserToCourse);
+router.post('/:courseId/enroll/free', requireAuth, userFreeEnrollToCourse);
+router.post('/:courseId/enroll/purchase', requireAuth, userPurchaseCourse);
+router.get('/:courseId/verify-purchase', requireAuth, verifySuccessfulPurchase);
 
 // ************************************************************************
 // *************************** AUTH AND ROLES PROTECTED *******************

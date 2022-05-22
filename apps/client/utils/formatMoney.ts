@@ -5,9 +5,8 @@ export default function formatMoney(amount = 0, currency = 'USD') {
     minimumFractionDigits: 2,
   };
 
-  if (amount <= 99) {
-    amount = amount * 100;
-  }
+  // TODO: fix course price input component
+  amount = amount * 100;
 
   const formatter = Intl.NumberFormat('en-US', options);
 

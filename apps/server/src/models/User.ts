@@ -59,8 +59,8 @@ const userSchema = new Schema<IUser>(
     },
     courses: [{ type: String }],
     stripe_account_id: '',
-    stripe_seller: {},
-    stripeSession: {},
+    stripe_seller: { type: Object },
+    stripeSession: { type: Object },
     passwordResetCode: {
       type: String,
       default: '',

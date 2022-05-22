@@ -11,7 +11,7 @@ import VideoPreviewModal from '../../../components/VideoPreviewModal';
 import classNames from 'classnames';
 import { useAuth } from '../../../context/auth.context';
 import Link from 'next/link';
-import { useFreeEnrollmentMutation } from '../../../async/rq/courses';
+import { useFreeEnrollmentMutation, usePurchaseCourseMutation } from '../../../async/rq/courses';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
@@ -27,7 +27,10 @@ const CourseBySlug = ({ course, error }: Props) => {
   const [preview, setPreview] = useState('');
   const [isEnrolled, setIsEnrolled] = useState(false);
 
+  const courseImage = course?.image?.Location || '/img/default-course-image.png';
+
   const { mutateAsync: enrollInFreeCourse } = useFreeEnrollmentMutation();
+  const { mutateAsync: purchaseCourse } = usePurchaseCourseMutation();
 
   const handleLessonVideoPreview = (video: IS3Image) => () => {
     if (video?.Location) {
@@ -46,7 +49,6 @@ const CourseBySlug = ({ course, error }: Props) => {
   }, [course, state?.user]);
 
   const handleFreeEnrollment = async () => {
-    console.log(' Free Enroll');
     if (!state?.user) {
       router.push('/login');
       return;
@@ -65,8 +67,22 @@ const CourseBySlug = ({ course, error }: Props) => {
       toast.error('Something went wrong. Please try again later');
     }
   };
-  const handleAddToCart = () => {
-    console.log(' Add to cart');
+  const handlePurchaseCourse = async () => {
+    if (!state?.user) {
+      router.push('/login');
+      return;
+    }
+    if (isEnrolled) {
+      router.push(`/course/${course?.slug}/learn`);
+      return;
+    }
+    try {
+      const { data } = await purchaseCourse({ courseId: course._id });
+      window?.location.replace(data);
+    } catch (error) {
+      console.error(error?.message);
+      toast.error('Something went wrong. Please try again later');
+    }
   };
   return (
     <div className="position-relative" style={{ overflowX: 'hidden' }}>
@@ -157,7 +173,7 @@ const CourseBySlug = ({ course, error }: Props) => {
                     <Col>
                       <div
                         style={{
-                          backgroundImage: 'url(' + course?.image.Location + ')',
+                          backgroundImage: 'url(' + courseImage + ')',
                           backgroundPosition: 'center center',
                           backgroundSize: 'cover',
                           backgroundRepeat: 'no-repeat',
@@ -243,7 +259,7 @@ const CourseBySlug = ({ course, error }: Props) => {
                       {/* <!-- ENROLL --> */}
                       <div className="feature d-flex flex-row align-items-center justify-content-start">
                         {state?.user ? (
-                          <Button className="mt-2" onClick={course?.paid ? handleAddToCart : handleFreeEnrollment}>
+                          <Button className="mt-2" onClick={course?.paid ? handlePurchaseCourse : handleFreeEnrollment}>
                             {state?.user && isEnrolled ? 'Continue' : 'Enroll'}
                           </Button>
                         ) : (
@@ -304,7 +320,6 @@ const CourseBySlug = ({ course, error }: Props) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   try {
     const { slug } = query;
-    console.log({ slug });
     const { data: course } = await getPublishedCourse(slug as string);
     return {
       props: {

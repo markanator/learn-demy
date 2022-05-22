@@ -21,11 +21,9 @@ const ViewCourseToEdit = (props) => {
   const handlePublish = async (e) => {
     if (window?.confirm('Once you publish your course, it will be live on the marketplace.')) {
       try {
-        const { data } = await toggleCoursePublish({ courseId: course?._id, value: true });
-        console.log('publish course', data);
+        await toggleCoursePublish({ courseId: course?._id, value: true });
         toast.success('Course published successfully.');
       } catch (error) {
-        console.log(error);
         toast.error('Something went wrong. Please try again later.');
       }
     }
@@ -33,11 +31,9 @@ const ViewCourseToEdit = (props) => {
   const handleUnPublish = async (e) => {
     if (window?.confirm('Once you unpublish your course, it will not be available for your users to enjoy.')) {
       try {
-        const { data } = await toggleCoursePublish({ courseId: course?._id, value: false });
-        console.log('UNpublish course', data);
+        await toggleCoursePublish({ courseId: course?._id, value: false });
         toast.success('Course unpublished successfully.');
       } catch (error) {
-        console.log(error);
         toast.error('Something went wrong. Please try again later.');
       }
     }

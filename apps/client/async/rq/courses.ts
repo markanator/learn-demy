@@ -5,10 +5,12 @@ import {
   getCourseBySlug,
   getPublishedCourse,
   getPublishedCourses,
+  initiateCoursePurchase,
   removeInitialImage,
   toggleCoursePublished,
   updateCourse,
   uploadImageToS3,
+  validateStripePurchase,
 } from '../api/courses';
 import { deleteLessonFromCourse } from '../api/lessons';
 import { INSTRUCTOR_COURSES_KEY } from './instructors';
@@ -105,4 +107,26 @@ export const useFreeEnrollmentMutation = () => {
       client.invalidateQueries(COURSE_BY_SLUG_KEY);
     },
   });
+};
+
+export const usePurchaseCourseMutation = () => {
+  const client = useQueryClient();
+  return useMutation(initiateCoursePurchase, {
+    onSuccess: () => {
+      client.invalidateQueries(COURSE_BY_SLUG_KEY);
+    },
+  });
+};
+
+export const useValidateStripePurchase = (courseId: string) => {
+  return useQuery(
+    [COURSE_BY_SLUG_KEY, courseId],
+    async () => {
+      const { data } = await validateStripePurchase({ courseId });
+      return data;
+    },
+    {
+      enabled: !!courseId,
+    }
+  );
 };
