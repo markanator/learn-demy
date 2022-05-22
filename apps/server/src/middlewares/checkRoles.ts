@@ -18,7 +18,8 @@ export const checkRoleMW =
         return next();
       }
 
-      if (!intersection(user.role, roles).length) {
+      const isAdmin = user.role.includes('Admin');
+      if (!intersection(user.role, roles).length && !isAdmin) {
         return res.status(403).send('Forbidden');
       }
 

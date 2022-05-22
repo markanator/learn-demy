@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { getUserEnrolledCOurses } from '../api/users';
+import { getUserEnrolledCourse, getUserEnrolledCOurses } from '../api/users';
 
 export const useGetUserEnrolledCourses = (userid: string) => {
   return useQuery(
@@ -10,6 +10,19 @@ export const useGetUserEnrolledCourses = (userid: string) => {
     },
     {
       enabled: !!userid,
+    }
+  );
+};
+
+export const useEnrolledCourseDetails = (slug: string) => {
+  return useQuery(
+    ['course', slug],
+    async () => {
+      const { data } = await getUserEnrolledCourse(slug);
+      return data;
+    },
+    {
+      enabled: !!slug,
     }
   );
 };
