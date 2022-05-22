@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
 import { getCurrentUser } from '../../async/api/auth';
 import Sidebar from '../UserNav/Sidebar';
 
@@ -35,12 +36,12 @@ const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
   }
 
   return (
-    <div className="container-fluid ps-0">
-      <div className="row">
+    <Container fluid className="ps-0 position-relative">
+      <Row>
         {showSidebar && (
-          <div className="col-md-2">
+          <Col md={2}>
             <Sidebar />
-          </div>
+          </Col>
         )}
         <div
           className={classNames({
@@ -50,8 +51,8 @@ const ProtectedUserPage = ({ showSidebar = true, children }: Props) => {
         >
           <>{children}</>
         </div>
-      </div>
-    </div>
+      </Row>
+    </Container>
   );
 };
 
