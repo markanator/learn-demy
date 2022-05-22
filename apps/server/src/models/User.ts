@@ -20,6 +20,7 @@ export interface IUser {
   stripe_seller?: Record<string, unknown>;
   stripeSession?: Record<string, unknown>;
   passwordResetCode?: string;
+  courses?: string[];
 }
 
 const userSchema = new Schema<IUser>(
@@ -56,6 +57,7 @@ const userSchema = new Schema<IUser>(
       default: ['Subscriber'],
       enum: ['Subscriber', 'Instructor', 'Admin'],
     },
+    courses: [{ type: String }],
     stripe_account_id: '',
     stripe_seller: {},
     stripeSession: {},

@@ -38,6 +38,8 @@ export const AuthContext = createContext<{
   dispatch: Dispatch<AuthAction>;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
 }>({ state: intialState, dispatch: () => {} });
+
+
 export const useAuth = () => {
   return useContext(AuthContext);
 };

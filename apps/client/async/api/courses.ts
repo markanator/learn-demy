@@ -44,3 +44,6 @@ export const getPublishedCourses = () => {
 export const getPublishedCourse = (slug: string) => {
   return axios.get(`/courses/${slug}`);
 };
+export const checkUserEnrollment = (courseId: string) => {
+  return axios.get(`/courses/${courseId}/check-enrollment`);
+};

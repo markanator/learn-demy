@@ -1,13 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetServerSideProps } from 'next';
 import ReactMarkdown from 'react-markdown';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Badge, Breadcrumb, Button, Col, Container, Image, ListGroup, Row, Tab, Tabs } from 'react-bootstrap';
-import { getPublishedCourse } from '../../async/api/courses';
-import { Course } from '../../types';
+import { checkUserEnrollment, getPublishedCourse } from '../../async/api/courses';
+import { Course, IS3Image } from '../../types';
 import formatMoney from '../../utils/formatMoney';
 import { AiFillPlayCircle } from 'react-icons/ai';
 import VideoPreviewModal from '../../components/VideoPreviewModal';
+import classNames from 'classnames';
+import { useAuth } from '../../context/auth.context';
+import Link from 'next/link';
 
 type Props = {
   course?: Course;
@@ -15,8 +18,33 @@ type Props = {
 };
 
 const CourseBySlug = ({ course, error }: Props) => {
+  const { state } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [preview, setPreview] = useState('');
+  const [isEnrolled, setIsEnrolled] = useState(false);
+
+  const handleLessonVideoPreview = (video: IS3Image) => () => {
+    if (video?.Location) {
+      setPreview(video?.Location);
+      setShowModal(true);
+    }
+  };
+
+  useEffect(() => {
+    // check if user is enrolled
+    if (course && state?.user) {
+      checkUserEnrollment(course._id).then(({ data }) => {
+        setIsEnrolled(data);
+      });
+    }
+  }, [course, state?.user]);
+
+  const handleFreeEnrollment = () => {
+    console.log(' Free Enroll');
+  };
+  const handleAddToCart = () => {
+    console.log(' Add to cart');
+  };
   return (
     <div className="position-relative">
       {/* BREADCRUMBS */}
@@ -149,14 +177,17 @@ const CourseBySlug = ({ course, error }: Props) => {
                           {course?.lessons.map((lesson) => (
                             <ListGroup.Item
                               key={lesson._id}
-                              className="d-flex justify-content-between align-items-center"
+                              className={classNames('d-flex justify-content-between align-items-center', {
+                                'cursor-pointer': lesson?.video && lesson?.free_preview,
+                              })}
+                              onClick={handleLessonVideoPreview(lesson?.video)}
                             >
                               <div className="ms-2 py-2 me-auto">
                                 <div className="fw-bold text-capitalize">{lesson?.title}</div>
                               </div>
-                              {lesson?.free_preview && (
+                              {lesson?.free_preview && lesson?.video && (
                                 <Badge bg="primary" pill>
-                                  Free Preview
+                                  Free Video Preview
                                 </Badge>
                               )}
                             </ListGroup.Item>
@@ -175,13 +206,23 @@ const CourseBySlug = ({ course, error }: Props) => {
                 {/* <!-- Feature --> */}
                 <div className="mb-4">
                   <h4 style={{ color: '#384158' }}>Course Features</h4>
-                  <div className="mt-4">
+                  <div className="mt-2">
                     <h3 style={{ color: '#14bdee' }}>{course?.paid ? formatMoney(course.price) : 'Free'}</h3>
 
                     <div className="feature_list">
                       {/* <!-- ENROLL --> */}
                       <div className="feature d-flex flex-row align-items-center justify-content-start">
-                        <Button className="mt-2">Add To Cart</Button>
+                        {state?.user ? (
+                          <Button className="mt-2" onClick={course?.paid ? handleAddToCart : handleFreeEnrollment}>
+                            {state?.user && isEnrolled ? 'Continue' : 'Enroll'}
+                          </Button>
+                        ) : (
+                          <Link href="/login" passHref>
+                            <Button as="a" className="mt-2">
+                              Login to enroll
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -5,6 +5,7 @@ import S3 from 'aws-sdk/clients/s3';
 import { nanoid } from 'nanoid';
 import Course from '../models/Course';
 import { readFileSync } from 'fs';
+import User from '../models/User';
 
 const awsConfig: S3.ClientConfiguration = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -37,6 +38,25 @@ export const getPublishedCourse = async (req: Request, res: Response) => {
       .populate('instructor', '_id name picture bio')
       .exec();
     res.status(200).json(course);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const checkCourseEnrollment = async (req: ReqWithUser, res: Response) => {
+  try {
+    const { courseId } = req.params;
+    const user = await User.findById(req.auth._id).exec();
+    // const courseIds = [];
+    let isEnrolled: boolean;
+    for (let i = 0; i < user?.courses.length; i++) {
+      if (user?.courses.includes(courseId)) {
+        isEnrolled = true;
+        break;
+      }
+    }
+    console.log({ isEnrolled });
+    res.status(200).json(!!isEnrolled);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

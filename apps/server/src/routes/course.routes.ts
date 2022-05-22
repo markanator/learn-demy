@@ -12,6 +12,7 @@ import {
   toggleCoursePublished,
   getPublishedCourseList,
   getPublishedCourse,
+  checkCourseEnrollment,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -25,6 +26,7 @@ const router = express.Router();
 
 router.get('/', getPublishedCourseList);
 router.get('/:slug', getPublishedCourse);
+router.get('/:courseId/check-enrollment', requireAuth, checkCourseEnrollment);
 
 // ************************************************************************
 // *************************** AUTH AND ROLES PROTECTED *******************
