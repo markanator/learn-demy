@@ -119,6 +119,6 @@ export type Course = {
   category?: string;
   published: boolean;
   paid?: boolean;
-  instructor: string | { _id: string; name: string; picture: string; bio: string };
+  instructor: { _id: string; name: string; picture: string; bio?: string };
   lessons: Lesson[];
 };

@@ -12,6 +12,12 @@ export const checkRoleMW =
         return res.status(401).send('User not found');
       }
 
+      if (!roles.length) {
+        console.log(" No roles specified, still inserting the authenticated user's roles");
+        res.locals.userRoles = user.role;
+        return next();
+      }
+
       if (!intersection(user.role, roles).length) {
         return res.status(403).send('Forbidden');
       }

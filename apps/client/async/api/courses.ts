@@ -60,3 +60,4 @@ export const initiateCoursePurchase = ({ courseId }: { courseId: string }) => {
 export const validateStripePurchase = ({ courseId }: { courseId: string }) => {
   return axios.get(`/courses/${courseId}/verify-purchase`);
 };
+

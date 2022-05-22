@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 // LOCAL IMPORTS
 import AuthRoutes from '../routes/auth.routes';
+import UserRoutes from '../routes/user.routes';
 import InstructorRoutes from '../routes/Instructor.routes';
 import CourseRoutes from '../routes/course.routes';
 import { __prod__ } from '../utils/env.utils';
@@ -31,9 +32,11 @@ app.use(compression());
 if (!__prod__) {
   app.use(morgan('dev'));
 }
+
 // routes
 app.get('/', (_, res) => res.send('Server up!'));
 app.use('/auth', AuthRoutes);
+app.use('/users', UserRoutes);
 app.use('/instructors', InstructorRoutes);
 app.use('/courses', CourseRoutes);
 
