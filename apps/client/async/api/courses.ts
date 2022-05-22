@@ -47,3 +47,8 @@ export const getPublishedCourse = (slug: string) => {
 export const checkUserEnrollment = (courseId: string) => {
   return axios.get(`/courses/${courseId}/check-enrollment`);
 };
+
+// enrollments
+export const enrollInFreeCourse = ({ courseId }: { courseId: string; }) => {
+  return axios.post(`/courses/${courseId}/free-enroll`);
+}

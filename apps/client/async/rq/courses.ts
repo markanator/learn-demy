@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   createCourse,
+  enrollInFreeCourse,
   getCourseBySlug,
   getPublishedCourse,
   getPublishedCourses,
@@ -92,6 +93,15 @@ export const useDeleteLessonFromCourseMutation = () => {
   return useMutation(deleteLessonFromCourse, {
     onSuccess: () => {
       client.invalidateQueries(INSTRUCTOR_COURSES_KEY);
+      client.invalidateQueries(COURSE_BY_SLUG_KEY);
+    },
+  });
+};
+
+export const useFreeEnrollmentMutation = () => {
+  const client = useQueryClient();
+  return useMutation(enrollInFreeCourse, {
+    onSuccess: () => {
       client.invalidateQueries(COURSE_BY_SLUG_KEY);
     },
   });

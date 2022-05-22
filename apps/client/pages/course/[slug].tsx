@@ -11,6 +11,8 @@ import VideoPreviewModal from '../../components/VideoPreviewModal';
 import classNames from 'classnames';
 import { useAuth } from '../../context/auth.context';
 import Link from 'next/link';
+import { useFreeEnrollmentMutation } from '../../async/rq/courses';
+import { toast } from 'react-toastify';
 
 type Props = {
   course?: Course;
@@ -22,6 +24,8 @@ const CourseBySlug = ({ course, error }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [preview, setPreview] = useState('');
   const [isEnrolled, setIsEnrolled] = useState(false);
+
+  const { mutateAsync: enrollInFreeCourse } = useFreeEnrollmentMutation();
 
   const handleLessonVideoPreview = (video: IS3Image) => () => {
     if (video?.Location) {
@@ -39,8 +43,17 @@ const CourseBySlug = ({ course, error }: Props) => {
     }
   }, [course, state?.user]);
 
-  const handleFreeEnrollment = () => {
+  const handleFreeEnrollment = async () => {
     console.log(' Free Enroll');
+    try {
+      const { data } = await enrollInFreeCourse({ courseId: course._id });
+      console.log(data);
+      setIsEnrolled(true);
+      toast.success('You are now enrolled in this course');
+    } catch (error) {
+      console.error(error?.message);
+      toast.error('Something went wrong. Please try again later');
+    }
   };
   const handleAddToCart = () => {
     console.log(' Add to cart');

@@ -43,6 +43,31 @@ export const getPublishedCourse = async (req: Request, res: Response) => {
   }
 };
 
+export const freeEnrollUserToCourse = async (req: ReqWithUser, res: Response) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).exec();
+    if (!course) {
+      return res.status(404).send('Course not found');
+    } else if (course?.paid) {
+      return res.status(400).send('You must purchase the course to enroll');
+    }
+
+    // update the user
+    const updateUser = await User.findByIdAndUpdate(
+      req.auth._id,
+      {
+        $addToSet: { courses: course._id },
+      },
+      { new: true }
+    ).exec();
+
+    res.status(200).json({ message: 'User enrolled to course' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const checkCourseEnrollment = async (req: ReqWithUser, res: Response) => {
   try {
     const { courseId } = req.params;
