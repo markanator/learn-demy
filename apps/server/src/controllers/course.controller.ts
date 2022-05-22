@@ -30,6 +30,18 @@ export const getPublishedCourseList = async (req: Request, res: Response) => {
   }
 };
 
+export const getPublishedCourse = async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    const course = await Course.findOne({ slug, published: true })
+      .populate('instructor', '_id name picture bio')
+      .exec();
+    res.status(200).json(course);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // ************************************************************************
 // *************************** S3 *************************************
 // ************************************************************************

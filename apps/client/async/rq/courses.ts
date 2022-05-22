@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   createCourse,
   getCourseBySlug,
+  getPublishedCourse,
   getPublishedCourses,
   removeInitialImage,
   toggleCoursePublished,
@@ -17,6 +18,13 @@ export const COURSE_BY_SLUG_KEY = 'course';
 export const usePublishedCourses = () => {
   return useQuery([COURSES_KEY], async () => {
     const { data } = await getPublishedCourses();
+    return data;
+  });
+};
+
+export const usePublishedCourseDetails = (slug: string) => {
+  return useQuery([COURSE_BY_SLUG_KEY, slug], async () => {
+    const { data } = await getPublishedCourse(slug);
     return data;
   });
 };

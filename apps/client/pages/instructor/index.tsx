@@ -27,14 +27,14 @@ const InstructorHomePage = () => {
                   <a>
                     <Card.Img
                       className="p-0 m-0"
-                      src={course?.image?.Location || 'https://picsum.photos/300/300?image=1072'}
+                      src={course?.image?.Location || '/img/default-course-image.png'}
                       alt={course.name}
                       style={{
                         objectFit: 'cover',
                         borderTopRightRadius: '0px',
                         borderBottomRightRadius: '0px',
                       }}
-                      width="325"
+                      width="325px"
                       height="100%"
                     />
                   </a>
@@ -48,7 +48,7 @@ const InstructorHomePage = () => {
                     </a>
                   </Link>
                   <Card.Subtitle>{course.lessons.length} Lessons</Card.Subtitle>
-                  <Card.Text>{course?.description || ''}</Card.Text>
+                  <Card.Text>{course?.description?.slice(0, 144) + '...' || ''}</Card.Text>
                   <br />
                   {course.lessons.length < 5 ? (
                     <Alert variant="warning">

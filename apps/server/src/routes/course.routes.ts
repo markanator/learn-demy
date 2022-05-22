@@ -11,6 +11,7 @@ import {
   updateLessonInCourse,
   toggleCoursePublished,
   getPublishedCourseList,
+  getPublishedCourse,
 } from '../controllers/course.controller';
 import { requireAuth } from '../middlewares/checkAuth';
 import { checkRoleMW } from '../middlewares/checkRoles';
@@ -23,6 +24,7 @@ const router = express.Router();
 // ************************************************************************
 
 router.get('/', getPublishedCourseList);
+router.get('/:slug', getPublishedCourse);
 
 // ************************************************************************
 // *************************** AUTH AND ROLES PROTECTED *******************
@@ -34,7 +36,7 @@ router.post('/remove-image', requireAuth, checkRoleMW('Instructor', 'Admin'), re
 router.post('/upload-video', requireAuth, checkRoleMW('Instructor', 'Admin'), formMiddleWare, uploadVideoToS3);
 router.post('/remove-video', requireAuth, checkRoleMW('Instructor', 'Admin'), removeFromS3);
 // COURSES
-router.get('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), getCourseBySlug);
+router.get('/:slug/to-edit', requireAuth, checkRoleMW('Instructor', 'Admin'), getCourseBySlug);
 router.post('/', requireAuth, checkRoleMW('Instructor', 'Admin'), createCourse);
 router.put('/:slug', requireAuth, checkRoleMW('Instructor', 'Admin'), updateCourse);
 router.put('/:courseId/publish/:toggleValue', requireAuth, checkRoleMW('Instructor', 'Admin'), toggleCoursePublished);

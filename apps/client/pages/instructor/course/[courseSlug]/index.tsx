@@ -56,16 +56,17 @@ const ViewCourseToEdit = (props) => {
                 <Col md={3} className="px-0">
                   <Card.Img
                     className="p-0 m-0"
-                    src={course?.image?.Location || 'https://picsum.photos/300/300?image=1072'}
+                    src={course?.image?.Location || '/img/default-course-image.png'}
                     alt={course.name}
                     style={{
                       objectFit: 'cover',
                       objectPosition: 'center',
                       borderTopRightRadius: '0px',
                       borderBottomRightRadius: '0px',
+                      maxHeight: '110px',
                     }}
-                    width="100%"
-                    height="100"
+                    width="325px"
+                    height="100%"
                   />
                 </Col>
                 <Col md={8} className="d-flex flex-column justify-content-center">

@@ -30,7 +30,7 @@ export const updateCourse = async ({ courseSlug, data }: { courseSlug: string; d
 };
 
 export const getCourseBySlug = async (courseSlug: string): Promise<AxiosResponse<Course, Error>> => {
-  return axios.get(`/courses/${courseSlug}`);
+  return axios.get(`/courses/${courseSlug}/to-edit`);
 };
 
 export const toggleCoursePublished = async ({ courseId, value }: { courseId: string; value: boolean }) => {
@@ -40,4 +40,7 @@ export const toggleCoursePublished = async ({ courseId, value }: { courseId: str
 //* PUBLIC ROUTES
 export const getPublishedCourses = () => {
   return axios.get('/courses');
-}
+};
+export const getPublishedCourse = (slug: string) => {
+  return axios.get(`/courses/${slug}`);
+};

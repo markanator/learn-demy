@@ -14,6 +14,7 @@ export interface IUser {
   email: string;
   password: string;
   picture?: string;
+  bio?: string;
   role: UserRole[];
   stripe_account_id?: string;
   stripe_seller?: Record<string, unknown>;
@@ -43,6 +44,12 @@ const userSchema = new Schema<IUser>(
     picture: {
       type: String,
       default: '/avatar.png',
+    },
+    bio: {
+      type: String,
+      default: '/avatar.png',
+      maxlength: 256,
+      minlength: 100,
     },
     role: {
       type: [String],
