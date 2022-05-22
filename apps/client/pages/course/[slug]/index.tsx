@@ -3,16 +3,17 @@ import { GetServerSideProps } from 'next';
 import ReactMarkdown from 'react-markdown';
 import React, { useEffect, useState } from 'react';
 import { Badge, Breadcrumb, Button, Col, Container, Image, ListGroup, Row, Tab, Tabs } from 'react-bootstrap';
-import { checkUserEnrollment, getPublishedCourse } from '../../async/api/courses';
-import { Course, IS3Image } from '../../types';
-import formatMoney from '../../utils/formatMoney';
+import { checkUserEnrollment, getPublishedCourse } from '../../../async/api/courses';
+import { Course, IS3Image } from '../../../types';
+import formatMoney from '../../../utils/formatMoney';
 import { AiFillPlayCircle } from 'react-icons/ai';
-import VideoPreviewModal from '../../components/VideoPreviewModal';
+import VideoPreviewModal from '../../../components/VideoPreviewModal';
 import classNames from 'classnames';
-import { useAuth } from '../../context/auth.context';
+import { useAuth } from '../../../context/auth.context';
 import Link from 'next/link';
-import { useFreeEnrollmentMutation } from '../../async/rq/courses';
+import { useFreeEnrollmentMutation } from '../../../async/rq/courses';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 type Props = {
   course?: Course;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 const CourseBySlug = ({ course, error }: Props) => {
+  const router = useRouter();
   const { state } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [preview, setPreview] = useState('');
@@ -45,11 +47,19 @@ const CourseBySlug = ({ course, error }: Props) => {
 
   const handleFreeEnrollment = async () => {
     console.log(' Free Enroll');
+    if (!state?.user) {
+      router.push('/login');
+      return;
+    }
+    if (isEnrolled) {
+      router.push(`/course/${course?.slug}/learn`);
+      return;
+    }
     try {
-      const { data } = await enrollInFreeCourse({ courseId: course._id });
-      console.log(data);
+      await enrollInFreeCourse({ courseId: course._id });
       setIsEnrolled(true);
       toast.success('You are now enrolled in this course');
+      router.push(`/course/${course?.slug}/learn`);
     } catch (error) {
       console.error(error?.message);
       toast.error('Something went wrong. Please try again later');
@@ -59,7 +69,7 @@ const CourseBySlug = ({ course, error }: Props) => {
     console.log(' Add to cart');
   };
   return (
-    <div className="position-relative">
+    <div className="position-relative" style={{ overflowX: 'hidden' }}>
       {/* BREADCRUMBS */}
       <div className="w-100 border-bottom position-relative">
         <div className="position-absolute left-0 top-0 w-100 pt-3 ps-1" style={{ backgroundColor: '#f2f4f5' }}>
@@ -69,10 +79,10 @@ const CourseBySlug = ({ course, error }: Props) => {
                 <div>
                   <Breadcrumb>
                     <Breadcrumb.Item>
-                      <a href="index.html">Home</a>
+                      <>Home</>
                     </Breadcrumb.Item>
                     <Breadcrumb.Item>
-                      <a href="courses.html">Courses</a>
+                      <>Courses</>
                     </Breadcrumb.Item>
                     <Breadcrumb.Item active>Course Details</Breadcrumb.Item>
                   </Breadcrumb>
@@ -92,7 +102,7 @@ const CourseBySlug = ({ course, error }: Props) => {
                   {course?.name}
                 </h1>
                 <div
-                  className="w-100 d-flex flex-column flex-lg-row  align-items-lg-center align-items-start justify-content-start"
+                  className="w-100 d-flex flex-row  align-items-center justify-content-start"
                   style={{ height: '92px', marginTop: '55px', backgroundColor: '#f2f4f5' }}
                 >
                   {/* COURSE Instrctor */}
@@ -142,26 +152,33 @@ const CourseBySlug = ({ course, error }: Props) => {
                 </div>
 
                 {/* <!-- Course Image or preview --> */}
-                <div className="mt-4 w-100">
+                <div className="mt-4">
                   {course?.lessons[0]?.video?.Location ? (
-                    <div
-                      style={{
-                        backgroundImage: 'url(' + course?.image.Location + ')',
-                        backgroundPosition: 'center',
-                        backgroundSize: 'cover',
-                        backgroundRepeat: 'no-repeat',
-                        marginBottom: '25px',
-                        width: '856px',
-                        height: '406px',
-                      }}
-                      className="d-flex justify-content-center align-items-center"
-                      onClick={() => {
-                        setPreview(course?.lessons[0].video.Location);
-                        setShowModal(!showModal);
-                      }}
-                    >
-                      <AiFillPlayCircle className="fs-1 text-light" />
-                    </div>
+                    <Col>
+                      <div
+                        style={{
+                          backgroundImage: 'url(' + course?.image.Location + ')',
+                          backgroundPosition: 'center center',
+                          backgroundSize: 'cover',
+                          backgroundRepeat: 'no-repeat',
+                          marginBottom: '25px',
+                          maxWidth: '856px',
+                          maxHeight: '406px',
+                        }}
+                        className="w-100 h-100"
+                        onClick={() => {
+                          setPreview(course?.lessons[0].video.Location);
+                          setShowModal(!showModal);
+                        }}
+                      >
+                        <div
+                          style={{ minHeight: '406px' }}
+                          className="d-flex justify-content-center align-items-center w-100 h-100"
+                        >
+                          <AiFillPlayCircle className="fs-1 text-light" />
+                        </div>
+                      </div>
+                    </Col>
                   ) : (
                     <Image
                       className="w-100 object-cover"
