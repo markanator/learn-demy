@@ -128,6 +128,7 @@ const CourseBySlug = ({ course, error }: Props) => {
                   >
                     <h4 style={{ fontSize: '18px', color: '#384158' }}>Instructor:</h4>
                     <div className="mt-2">
+                      {/* @ts-ignore */}
                       <span>{course?.instructor?.name}</span>
                     </div>
                   </div>
@@ -281,7 +282,9 @@ const CourseBySlug = ({ course, error }: Props) => {
                     <div className="teacher_title_container d-flex flex-row align-items-center justify-content-start">
                       <div className="mt-2">
                         <img
+                          // @ts-ignore
                           src={course?.instructor?.picture || '/img/default_user_avatar.jpg'}
+                          // @ts-ignore
                           alt={course?.instructor?.name}
                           width={80}
                           height={80}
@@ -291,6 +294,7 @@ const CourseBySlug = ({ course, error }: Props) => {
                         <div className="teacher_name">
                           {/* <Link href="#" passHref> */}
                           {/* <a> */}
+                          {/* @ts-ignore */}
                           <h5>{course?.instructor?.name}</h5>
                           {/* </a> */}
                           {/* </Link> */}
@@ -298,8 +302,10 @@ const CourseBySlug = ({ course, error }: Props) => {
                         {/* <div className="teacher_position">Marketing & Management</div> */}
                       </div>
                     </div>
+                    {/* @ts-ignore */}
                     {course?.instructor?.bio && (
                       <div className="mt-4">
+                        {/* @ts-ignore */}
                         <p>{course?.instructor?.bio}</p>
                       </div>
                     )}
