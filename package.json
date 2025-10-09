@@ -12,7 +12,7 @@
     "@ant-design/icons": "^5.4.0",
     "@nx/next": "19.6.1",
     "aws-sdk": "^2.1679.0",
-    "axios": "^1.7.4",
+    "axios": "^1.12.0",
     "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
     "classnames": "^2.5.1",
