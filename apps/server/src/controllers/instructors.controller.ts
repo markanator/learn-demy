@@ -68,7 +68,7 @@ export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
           role: 'Instructor',
         },
       },
-      { new: true }
+      { new: true },
     )
       .select('-password -passwordResetCode')
       .exec();

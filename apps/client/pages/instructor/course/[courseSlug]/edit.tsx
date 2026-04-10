@@ -15,9 +15,7 @@ const EditCourse = () => {
 
   return (
     <ProtectedInstructorPage>
-      <h1 className="jumbotron text-center bg-primary square py-4 text-capitalize">
-        Edit: {course?.name}
-      </h1>
+      <h1 className="jumbotron text-center bg-primary square py-4 text-capitalize">Edit: {course?.name}</h1>
       <div className="py-3">
         <CourseCreateForm course={course} isEditing={true} />
       </div>

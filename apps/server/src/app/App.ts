@@ -23,7 +23,7 @@ app.use(
   cors({
     credentials: true,
     origin: process.env.CORS_ORIGIN,
-  })
+  }),
 );
 app.use(helmet());
 app.use(cookieParser());
@@ -44,7 +44,7 @@ app.use(csrfProtection);
 app.get('/csrf-token', (req, res) =>
   res.json({
     csrfToken: req.csrfToken(),
-  })
+  }),
 );
 
 // 404

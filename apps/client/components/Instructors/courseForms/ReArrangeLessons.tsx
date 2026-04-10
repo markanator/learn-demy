@@ -37,7 +37,7 @@ const RearrangeLessons = ({ setValues, values, afterChange, openEditLessonModal 
       setValues(updatedCourse);
       throttle(afterChange, 500);
     },
-    [values, setValues, afterChange]
+    [values, setValues, afterChange],
   );
 
   const handleDelete = useCallback(
@@ -57,7 +57,7 @@ const RearrangeLessons = ({ setValues, values, afterChange, openEditLessonModal 
         return;
       }
     },
-    [values, setValues, courseSlug, deleteLessonFromCourse]
+    [values, setValues, courseSlug, deleteLessonFromCourse],
   );
 
   return (

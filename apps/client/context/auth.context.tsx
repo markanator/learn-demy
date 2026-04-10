@@ -1,11 +1,5 @@
 import axios from '../async/axios';
-import {
-  createContext,
-  Dispatch,
-  useContext,
-  useEffect,
-  useReducer,
-} from 'react';
+import { createContext, Dispatch, useContext, useEffect, useReducer } from 'react';
 import { useRouter } from 'next/router';
 import { StripeSeller, UserRole } from '../types';
 
@@ -28,9 +22,7 @@ const intialState: IAuthContext = {
   user: null,
 };
 
-type AuthAction =
-  | { type: 'LOGIN'; payload: IAuthContext['user'] }
-  | { type: 'LOGOUT' };
+type AuthAction = { type: 'LOGIN'; payload: IAuthContext['user'] } | { type: 'LOGOUT' };
 
 // create context
 export const AuthContext = createContext<{
@@ -38,7 +30,6 @@ export const AuthContext = createContext<{
   dispatch: Dispatch<AuthAction>;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
 }>({ state: intialState, dispatch: () => {} });
-
 
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -84,7 +75,7 @@ const AuthProvider = ({ children }) => {
         });
       }
       return Promise.reject(error);
-    }
+    },
   );
 
   useEffect(() => {
@@ -105,11 +96,7 @@ const AuthProvider = ({ children }) => {
     getCSRF();
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

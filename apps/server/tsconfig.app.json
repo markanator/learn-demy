@@ -3,10 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "ES6",
-    "types": [
-      "node",
-      "express"
-    ],
+    "types": ["node", "express"],
     "esModuleInterop": true
   },
   "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],

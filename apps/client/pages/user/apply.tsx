@@ -29,9 +29,7 @@ const ApplyForInstructor = () => {
 
   return (
     <ProtectedUserPage showSidebar={false}>
-      <h1 className="jumbotron text-center bg-primary square py-4">
-        Apply For Instructor
-      </h1>
+      <h1 className="jumbotron text-center bg-primary square py-4">Apply For Instructor</h1>
       <div className="container">
         <div className="row">
           <div className="col-md-6 offset-md-3 text-center">
@@ -39,23 +37,15 @@ const ApplyForInstructor = () => {
               <UserSwitchOutlined className="display-1 pb-3" />
               <br />
               <h2>Setup payout to publish courses on edemy</h2>
-              <p className="lead text-warning">
-                Edemy partners with strip to transfer earning to your bank
-                account.
-              </p>
+              <p className="lead text-warning">Edemy partners with strip to transfer earning to your bank account.</p>
               <Button
                 className="mb-3"
                 onClick={handleApply}
-                disabled={
-                  (user && user.role && user.role.includes('Instructor')) ||
-                  loading
-                }
+                disabled={(user && user.role && user.role.includes('Instructor')) || loading}
               >
                 {loading ? 'Processing...' : 'Payout Setup'}
               </Button>
-              <p className="lead">
-                You will be redirected to Stripe to setup your account.
-              </p>
+              <p className="lead">You will be redirected to Stripe to setup your account.</p>
             </div>
           </div>
         </div>

@@ -6,7 +6,9 @@
     "dev": "ts-node --project tsconfig.app.json src/main.ts",
     "build": "tsc --project tsconfig.app.json",
     "start": "node dist/main.js",
-    "lint": "eslint .",
+    "lint": "oxlint",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {

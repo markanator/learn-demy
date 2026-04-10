@@ -32,7 +32,7 @@ export const developmentErrors = (err, req, res) => {
 export const errorHandler = (
   err: Error,
   _: Request,
-  res: Response
+  res: Response,
   // _: NextFunction
 ) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;

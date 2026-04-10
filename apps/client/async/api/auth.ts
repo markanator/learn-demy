@@ -1,10 +1,6 @@
 import axios from '../axios';
 
-export const registerNewUser = async (data: {
-  name: string;
-  email: string;
-  password: string;
-}) => {
+export const registerNewUser = async (data: { name: string; email: string; password: string }) => {
   return axios.post('/auth/register', data);
 };
 
@@ -20,11 +16,7 @@ export const forgotPassword = async (data: { email: string }) => {
   return axios.post('/auth/forgot-password', data);
 };
 
-export const resetPassword = async (data: {
-  email: string;
-  code: string;
-  newPassword: string;
-}) => {
+export const resetPassword = async (data: { email: string; code: string; newPassword: string }) => {
   return axios.post('/auth/reset-password', data);
 };
 

@@ -38,7 +38,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
     (course && {
       ...course,
     }) ||
-      initialState
+      initialState,
   );
   const [image, setImage] = useState<IS3Image>(course?.image ?? undefined);
   const [imgPreview, setImgPreview] = useState(course?.image?.Location ?? '');
@@ -80,7 +80,7 @@ const CourseCreateForm = ({ course, isEditing = false }: Props) => {
       setCurrentLessonToEdit(lesson);
       setIsEditLessonModalOpen(true);
     },
-    []
+    [],
   );
 
   const closeEditLessonModal = useCallback(() => {

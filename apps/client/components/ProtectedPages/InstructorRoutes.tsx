@@ -10,10 +10,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const ProtectedInstructorPage = ({
-  showSidebar = true,
-  children,
-}: Props) => {
+export const ProtectedInstructorPage = ({ showSidebar = true, children }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 

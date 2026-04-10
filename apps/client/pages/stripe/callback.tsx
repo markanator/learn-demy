@@ -31,10 +31,7 @@ const StripeCallbackPage = () => {
   }, [user, dispatch, router]);
   return (
     <ProtectedUserPage>
-      <div
-        className="d-flex w-100 justify-content-center align-items-center"
-        style={{ height: '50vh' }}
-      >
+      <div className="d-flex w-100 justify-content-center align-items-center" style={{ height: '50vh' }}>
         <SyncOutlined spin className="text-primary fs-1" />
       </div>
     </ProtectedUserPage>

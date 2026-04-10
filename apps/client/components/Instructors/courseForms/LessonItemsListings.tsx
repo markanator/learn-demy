@@ -39,11 +39,7 @@ const LessonItem = ({ handleDelete, lesson, index, openEditLessonModal }: Lesson
     <Draggable key={lesson._id} draggableId={lesson._id} index={index}>
       {(draggableProvided) => (
         <>
-          <Row
-            ref={draggableProvided.innerRef}
-            {...draggableProvided.draggableProps}
-            className="py-1 bg-light"
-          >
+          <Row ref={draggableProvided.innerRef} {...draggableProvided.draggableProps} className="py-1 bg-light">
             <Col className="d-flex justify-content-between align-items-center">
               <div className="d-flex justify-content-start align-items-center">
                 <div style={{ marginTop: '-5px' }}>

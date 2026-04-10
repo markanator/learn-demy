@@ -121,7 +121,7 @@ export const userFreeEnrollToCourse = async (req: ReqWithUser, res: Response) =>
       {
         $addToSet: { courses: course._id },
       },
-      { new: true }
+      { new: true },
     ).exec();
 
     res.status(200).json({ message: 'User enrolled to course' });
@@ -155,7 +155,7 @@ export const verifySuccessfulPurchase = async (req: ReqWithUser, res: Response) 
         $addToSet: { courses: course._id },
         $set: { stripeSession: {} },
       },
-      { new: true }
+      { new: true },
     ).exec();
 
     res.status(200).json({ slug: course.slug, ok: true });
@@ -326,7 +326,7 @@ export const updateCourse = async (req: ReqWithUser, res: ResWithUserRoles) => {
       {
         new: true,
         // TODO: figure out lessons sort order sorting
-      }
+      },
     ).exec();
 
     return res.status(201).send({ ok: true, course });
@@ -383,7 +383,7 @@ export const toggleCoursePublished = async (req: ReqWithUser, res: ResWithUserRo
       { published },
       {
         new: true,
-      }
+      },
     );
 
     return res.status(200).send(updatedCourse);
@@ -425,7 +425,7 @@ export const addLessonToCourse = async (req: ReqWithUser, res: ResWithUserRoles)
       },
       {
         new: true,
-      }
+      },
     )
       .populate('instructor', '_id name')
       .exec();
@@ -471,7 +471,7 @@ export const updateLessonInCourse = async (req: ReqWithUser, res: ResWithUserRol
       },
       {
         new: true,
-      }
+      },
     )
       .populate('instructor', '_id name')
       .exec();

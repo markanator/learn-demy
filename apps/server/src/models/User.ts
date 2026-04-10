@@ -66,7 +66,7 @@ const userSchema = new Schema<IUser>(
       default: '',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model('User', userSchema);

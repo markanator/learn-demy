@@ -31,7 +31,7 @@ const lessonSchema = new mongoose.Schema<Lesson>(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const courseSchema = new mongoose.Schema<Course>(
@@ -73,7 +73,7 @@ const courseSchema = new mongoose.Schema<Course>(
     },
     lessons: [lessonSchema],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model('Course', courseSchema);

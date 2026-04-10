@@ -52,11 +52,6 @@ router.put('/:courseId/publish/:toggleValue', requireAuth, checkRoleMW('Instruct
 // LESSONS
 router.post('/:slug/lessons', requireAuth, checkRoleMW('Instructor', 'Admin'), addLessonToCourse);
 router.put('/:slug/lessons/:lessonId', requireAuth, checkRoleMW('Instructor', 'Admin'), updateLessonInCourse);
-router.delete(
-  '/:slug/lessons/:lessonId',
-  requireAuth,
-  checkRoleMW('Instructor', 'Admin'),
-  deleteLessonFromCourse
-);
+router.delete('/:slug/lessons/:lessonId', requireAuth, checkRoleMW('Instructor', 'Admin'), deleteLessonFromCourse);
 
 export default router;

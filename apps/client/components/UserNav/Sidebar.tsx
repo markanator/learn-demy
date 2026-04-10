@@ -11,10 +11,7 @@ const Sidebar = () => {
     }
   }, [curr]);
   return (
-    <div
-      className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
-      style={{ height: 'calc(100vh - 56px)' }}
-    >
+    <div className="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style={{ height: 'calc(100vh - 56px)' }}>
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
           <Link href="/user" passHref>

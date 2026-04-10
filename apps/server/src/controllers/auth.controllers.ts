@@ -128,7 +128,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       { email },
       {
         passwordResetCode: shortCode,
-      }
+      },
     ).exec();
 
     if (!dbUser) {
@@ -161,7 +161,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
             Data: 'Password Reset Code',
           },
         },
-      })
+      }),
     );
 
     return res.status(200).json({ ok: true });
@@ -181,7 +181,7 @@ export const resetPassword = async (req: ReqWithUser, res: Response) => {
     const hashedPassword = await hashPassword(newPassword);
     const updatedUser = await User.findOneAndUpdate<IUser>(
       { email, passwordResetCode: code },
-      { password: hashedPassword, passwordResetCode: '' }
+      { password: hashedPassword, passwordResetCode: '' },
     ).exec();
 
     if (!updatedUser) {

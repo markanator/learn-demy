@@ -41,7 +41,7 @@ export const useCourseBySlug = (slug?: string) => {
     },
     {
       enabled: !!slug,
-    }
+    },
   );
 };
 
@@ -127,6 +127,6 @@ export const useValidateStripePurchase = (courseId: string) => {
     },
     {
       enabled: !!courseId,
-    }
+    },
   );
 };

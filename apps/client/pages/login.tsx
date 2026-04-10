@@ -57,17 +57,12 @@ const Login = () => {
             required
           />
 
-          <button
-            type="submit"
-            disabled={!email || !password || isLoading}
-            className="btn btn-block btn-primary"
-          >
+          <button type="submit" disabled={!email || !password || isLoading} className="btn btn-block btn-primary">
             {!isLoading ? 'Login' : <SyncOutlined />}
           </button>
         </form>
         <p className="mt-4">
-          Forgot your password?{' '}
-          <Link href="/forgot-password">Forgot Password</Link>
+          Forgot your password? <Link href="/forgot-password">Forgot Password</Link>
         </p>
         <p className="mt-4">
           Not yet registered? <Link href="/register">Register</Link>

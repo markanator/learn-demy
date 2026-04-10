@@ -86,11 +86,7 @@ const ForgotPasswordPage = (props) => {
             )}
           </fieldset>
 
-          <button
-            type="submit"
-            disabled={!email || isLoading}
-            className="btn btn-block btn-primary"
-          >
+          <button type="submit" disabled={!email || isLoading} className="btn btn-block btn-primary">
             {!isLoading ? 'Submit' : <SyncOutlined spin />}
           </button>
         </form>

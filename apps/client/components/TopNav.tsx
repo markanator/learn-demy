@@ -1,13 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import {
-  Container,
-  Nav,
-  Navbar,
-  NavDropdown,
-  Offcanvas,
-} from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown, Offcanvas } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { logoutUser } from '../async/api/auth';
 import { useAuth } from '../context/auth.context';

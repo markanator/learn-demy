@@ -10,7 +10,7 @@ export const useGetUserEnrolledCourses = (userid: string) => {
     },
     {
       enabled: !!userid,
-    }
+    },
   );
 };
 
@@ -23,6 +23,6 @@ export const useEnrolledCourseDetails = (slug: string) => {
     },
     {
       enabled: !!slug,
-    }
+    },
   );
 };

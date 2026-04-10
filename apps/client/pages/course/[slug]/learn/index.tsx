@@ -31,12 +31,12 @@ const EnrolledUserLearnPage = (props: Props) => {
 
   const lessonInfo: Lesson = useMemo(
     () => course?.lessons[lessonToDisplayIndex] || null,
-    [course?.lessons, lessonToDisplayIndex]
+    [course?.lessons, lessonToDisplayIndex],
   );
 
   const isLastLesson = useMemo(
     () => lessonToDisplayIndex === course?.lessons.length - 1,
-    [lessonToDisplayIndex, course?.lessons]
+    [lessonToDisplayIndex, course?.lessons],
   );
 
   const handlePressNextLesson = () => {
