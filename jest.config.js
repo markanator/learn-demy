@@ -1,5 +1,3 @@
-const { getJestProjects } = require('@nrwl/jest');
-
 module.exports = {
-  projects: getJestProjects(),
+  projects: ['<rootDir>/apps/client', '<rootDir>/apps/server'],
 };

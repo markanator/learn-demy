@@ -1,7 +1,0 @@
-{
-  "version": 2,
-  "projects": {
-    "client": "apps/client",
-    "server": "apps/server"
-  }
-}
