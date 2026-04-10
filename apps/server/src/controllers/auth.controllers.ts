@@ -3,16 +3,17 @@ import User, { IUser } from '../models/User';
 import { hashPassword, comparePassword } from '../utils/auth.utils';
 import jwt from 'jsonwebtoken';
 import { __prod__ } from '../utils/env.utils';
-import SES from 'aws-sdk/clients/ses';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { nanoid } from 'nanoid';
 import type { ReqWithUser } from '../app/types';
 
-const awsConfig: SES.ClientConfiguration = {
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const sesClient = new SESClient({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
   region: process.env.AWS_REGION,
-  apiVersion: process.env.AWS_API_VERSION,
-};
+});
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -134,17 +135,18 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.status(404).send('User not found');
     }
 
-    const params: SES.SendEmailRequest = {
-      Source: process.env.SES_EMAIL_FROM,
-      Destination: {
-        ToAddresses: [dbUser.email],
-      },
-      ReplyToAddresses: [process.env.SES_EMAIL_FROM],
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: `
+    await sesClient.send(
+      new SendEmailCommand({
+        Source: process.env.SES_EMAIL_FROM,
+        Destination: {
+          ToAddresses: [dbUser.email],
+        },
+        ReplyToAddresses: [process.env.SES_EMAIL_FROM],
+        Message: {
+          Body: {
+            Html: {
+              Charset: 'UTF-8',
+              Data: `
             <html>
               <h1>Password Reset Link</h1>
               <p>Please use the following code to reset your password</p>
@@ -152,21 +154,15 @@ export const forgotPassword = async (req: Request, res: Response) => {
               <i>learnwind.com</i>
             </html>
             `,
+            },
+          },
+          Subject: {
+            Charset: 'UTF-8',
+            Data: 'Password Reset Code',
           },
         },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: 'Password Reset Code',
-        },
-      },
-    };
-
-    const sesclient = new SES(awsConfig);
-
-    await sesclient.sendEmail(params).promise();
-    //  const emailSent = await sesclient.sendEmail(params).promise();
-    // const sentRes = await emailSent.$response.data;
-    // console.warn({ shortCode });
+      })
+    );
 
     return res.status(200).json({ ok: true });
   } catch (err) {

@@ -1,7 +1,8 @@
 import type { Response, Request } from 'express';
 import type { Course as TCourse, File, ReqWithUser, ReqWithUserAndFormData, ResWithUserRoles } from '../app/types';
 import slugify from 'slugify';
-import S3 from 'aws-sdk/clients/s3';
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import { nanoid } from 'nanoid';
 import Course from '../models/Course';
 import { readFileSync } from 'fs';
@@ -12,14 +13,13 @@ const stripe = new Stripe(process.env.Stripe_SECRET_KEY, {
   apiVersion: '2020-08-27',
 });
 
-const awsConfig: S3.ClientConfiguration = {
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3Client = new S3Client({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
   region: process.env.AWS_REGION,
-  apiVersion: process.env.AWS_API_VERSION,
-};
-
-const s3Client = new S3(awsConfig);
+});
 
 // ************************************************************************
 // *************************** PUBLIC *************************************
@@ -200,23 +200,19 @@ export const uploadImageToS3 = async (req: ReqWithUser, res: Response) => {
     const base64Data = new Buffer.from(image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
     const type = image.split(';')[0].split('/')[1];
 
-    const params: S3.PutObjectRequest = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `${req.auth._id}_${nanoid()}.${type}`,
-      Body: base64Data,
-      // ACL: 'public-read', // TODO: limit access to only this website
-      ContentEncoding: 'base64',
-      ContentType: `image/${type}`,
-    };
-
-    s3Client.upload(params, (err, data) => {
-      if (err) {
-        console.warn('Error uploading image: ', err?.message);
-        return res.status(500).send(err?.message);
-      }
-      return res.status(201).send(data);
-      // prettier-ignore
+    const upload = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${req.auth._id}_${nanoid()}.${type}`,
+        Body: base64Data,
+        ContentEncoding: 'base64',
+        ContentType: `image/${type}`,
+      },
     });
+
+    const data = await upload.done();
+    return res.status(201).send(data);
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error. Try again.');
@@ -230,22 +226,19 @@ export const uploadVideoToS3 = async (req: ReqWithUserAndFormData, res: ResWithU
       return res.status(400).send('Video is required');
     }
     const type = (video as File).mimetype.split('/')[1];
-    const videoParams: S3.PutObjectRequest = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `${req.auth._id}_${nanoid()}.${type}`,
-      Body: readFileSync((video as File).filepath),
-      // ACL: 'public-read', // TODO: limit access to only this website
-      ContentEncoding: (video as File).mimetype,
-    };
-    // upload video to s3
-    s3Client.upload(videoParams, (err, data) => {
-      if (err) {
-        console.warn('Error uploading video: ', err?.message);
-        return res.status(500).send(err?.message);
-      }
-      return res.status(201).send(data);
-      // prettier-ignore
+
+    const upload = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${req.auth._id}_${nanoid()}.${type}`,
+        Body: readFileSync((video as File).filepath),
+        ContentType: (video as File).mimetype,
+      },
     });
+
+    const data = await upload.done();
+    return res.status(201).send(data);
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error. Try again.');
@@ -259,18 +252,8 @@ export const removeFromS3 = async (req: ReqWithUser, res: Response) => {
     if (!Bucket || !Key) {
       return res.status(400).send('Bucket and Key is required');
     }
-    const params: S3.DeleteObjectRequest = {
-      Bucket,
-      Key,
-    };
-    // send remove request to s3
-    s3Client.deleteObject(params, (err) => {
-      if (err) {
-        console.warn('Error deleting image: ', err?.message);
-        return res.status(500).send(err?.message);
-      }
-      return res.status(200).send({ ok: true });
-    });
+    await s3Client.send(new DeleteObjectCommand({ Bucket, Key }));
+    return res.status(200).send({ ok: true });
   } catch (error) {
     console.error(error?.message);
     return res.status(500).send('Error. Try again.');
