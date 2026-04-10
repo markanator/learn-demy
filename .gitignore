@@ -4,6 +4,8 @@
 /dist
 /tmp
 /out-tsc
+.next
+*.tsbuildinfo
 
 # turbo
 .turbo
@@ -40,5 +42,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# vexp
+.vexp/
 
 .env*
