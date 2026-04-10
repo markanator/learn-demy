@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-export const catchAsyncErrors = (fn) => {
+export const catchAsyncErrors = (fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>) => {
   return function (req: Request, res: Response, next: NextFunction) {
     return fn(req, res, next).catch(next);
   };
@@ -12,7 +12,7 @@ export const notFoundHandler = (req: Request, res: Response, next: NextFunction)
   return next(error);
 };
 
-export const developmentErrors = (err, req, res) => {
+export const developmentErrors = (err: Error & { status?: number }, req: Request, res: Response) => {
   err.stack = err.stack || '';
   const errorDetails = {
     message: err.message,

@@ -5,12 +5,11 @@ import jwt from 'jsonwebtoken';
 import { __prod__ } from '../utils/env.utils';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { nanoid } from 'nanoid';
-import type { ReqWithUser } from '../app/types';
 
 const sesClient = new SESClient({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
   region: process.env.AWS_REGION,
 });
@@ -45,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
 
     return res.status(201).json({ ok: true });
   } catch (err) {
-    console.warn(err?.message);
+    console.warn(err instanceof Error ? err.message : err);
     return res.status(400).send('Error. Try again.');
   }
 };
@@ -69,12 +68,12 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // login
-    const token = jwt.sign({ _id: userExist._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ _id: userExist._id }, process.env.JWT_SECRET!, {
       expiresIn: '7d',
     });
 
     // return user and token, not password
-    userExist.password = undefined;
+    userExist.password = undefined as unknown as string;
     // send token as cookie
     res.cookie('token', token, {
       httpOnly: true,
@@ -100,9 +99,9 @@ export const logout = async (req: Request, res: Response) => {
   }
 };
 
-export const currentUser = async (req: ReqWithUser, res: Response) => {
+export const currentUser = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req?.auth._id).select('-password').exec();
+    const user = await User.findById(req.auth!._id).select('-password').exec();
     if (!user) {
       return res.status(404).send('User not found');
     }
@@ -137,11 +136,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     await sesClient.send(
       new SendEmailCommand({
-        Source: process.env.SES_EMAIL_FROM,
+        Source: process.env.SES_EMAIL_FROM!,
         Destination: {
           ToAddresses: [dbUser.email],
         },
-        ReplyToAddresses: [process.env.SES_EMAIL_FROM],
+        ReplyToAddresses: [process.env.SES_EMAIL_FROM!],
         Message: {
           Body: {
             Html: {
@@ -171,7 +170,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const resetPassword = async (req: ReqWithUser, res: Response) => {
+export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { email, code, newPassword } = req.body;
     if (!email || !code || !newPassword) {

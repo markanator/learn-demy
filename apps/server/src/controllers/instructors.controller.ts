@@ -1,5 +1,4 @@
-import { Response } from 'express';
-import type { ReqWithUser } from '../app/types';
+import { Request, Response } from 'express';
 import User from '../models/User';
 import { config } from 'dotenv';
 import Stripe from 'stripe';
@@ -7,14 +6,12 @@ import qs from 'query-string';
 import Course from '../models/Course';
 
 config();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2020-08-27',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
+export const applyForInstructor = async (req: Request, res: Response) => {
   try {
     // find user
-    const user = await User.findById(req.auth._id).exec();
+    const user = await User.findById(req.auth!._id).exec();
     if (!user) {
       return res.status(404).send('User not found');
     }
@@ -28,8 +25,8 @@ export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
     // create account link based on stripe account id, UI will complete the onboarding process
     let accountLink = await stripe.accountLinks.create({
       account: user.stripe_account_id,
-      refresh_url: process.env.STRIPE_REDIRECT_URL,
-      return_url: process.env.STRIPE_REDIRECT_URL,
+      refresh_url: process.env.STRIPE_REDIRECT_URL!,
+      return_url: process.env.STRIPE_REDIRECT_URL!,
       type: 'account_onboarding',
     });
     // pre-fill the stripe form such as email, send URL to UI
@@ -42,19 +39,19 @@ export const applyForInstructor = async (req: ReqWithUser, res: Response) => {
 
     res.status(200).json({ ok: true, url });
   } catch (error) {
-    console.warn(error?.message);
+    console.warn(error instanceof Error ? error.message : error);
     res.status(400).send('An error occured');
   }
 };
 
-export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
+export const getAccountStatus = async (req: Request, res: Response) => {
   try {
     // find user
-    const user = await User.findById(req.auth._id).exec();
+    const user = await User.findById(req.auth!._id).exec();
     if (!user) {
       return res.status(404).send('User not found');
     }
-    const stripeAccount = await stripe.accounts.retrieve(user.stripe_account_id);
+    const stripeAccount = await stripe.accounts.retrieve(user.stripe_account_id!);
 
     if (!stripeAccount.charges_enabled) {
       return res.status(401).send('Not authorized');
@@ -72,18 +69,17 @@ export const getAccountStatus = async (req: ReqWithUser, res: Response) => {
     )
       .select('-password -passwordResetCode')
       .exec();
-    // sellerUpdatedUser.password = undefined;
 
     res.status(200).json(sellerUpdatedUser);
   } catch (error) {
-    console.warn(error?.message);
+    console.warn(error instanceof Error ? error.message : error);
     res.status(400).send('An error occured');
   }
 };
 
-export const currentInstructor = async (req: ReqWithUser, res: Response) => {
+export const currentInstructor = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.auth._id).select('-password').exec();
+    const user = await User.findById(req.auth!._id).select('-password').exec();
     if (!user) {
       return res.status(404).send('User not found');
     } else if (!user?.role.includes('Instructor')) {
@@ -92,21 +88,21 @@ export const currentInstructor = async (req: ReqWithUser, res: Response) => {
 
     res.status(200).json({ ok: true });
   } catch (error) {
-    console.warn(error?.message);
+    console.warn(error instanceof Error ? error.message : error);
     res.status(400).send('An error occured');
   }
 };
 
-export const instructorCourses = async (req: ReqWithUser, res: Response) => {
+export const instructorCourses = async (req: Request, res: Response) => {
   try {
     const courses = await Course.find({
-      instructor: req.auth._id,
-    })
+      instructor: req.auth!._id,
+    } as Record<string, unknown>)
       .sort({ createdAt: -1 })
       .exec();
     return res.status(200).json(courses);
   } catch (error) {
-    console.error(error?.message);
+    console.error(error instanceof Error ? error.message : error);
     return res.status(500).send('Error. Try again.');
   }
 };

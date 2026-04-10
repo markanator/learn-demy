@@ -5,7 +5,7 @@ const port = process.env.PORT || 3333;
 
 function main() {
   mongoose
-    .connect(process.env.DB_URL, {})
+    .connect(process.env.DB_URL!, {})
     .then(() => console.info('DB connected'))
     .catch((err) => console.error('DB Error => ', err));
 

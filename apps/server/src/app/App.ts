@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { config } from 'dotenv';
-import csrf from 'csurf';
+import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -16,7 +16,11 @@ import { developmentErrors, errorHandler, notFoundHandler } from '../utils/route
 
 config();
 
-const csrfProtection = csrf({ cookie: true });
+const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET || 'csrf-secret',
+  getSessionIdentifier: (req) => req.cookies.token || '',
+  cookieName: '__csrf',
+});
 const app = express();
 // MW
 app.use(
@@ -40,10 +44,10 @@ app.use('/users', UserRoutes);
 app.use('/instructors', InstructorRoutes);
 app.use('/courses', CourseRoutes);
 
-app.use(csrfProtection);
+app.use(doubleCsrfProtection);
 app.get('/csrf-token', (req, res) =>
   res.json({
-    csrfToken: req.csrfToken(),
+    csrfToken: generateCsrfToken(req, res),
   }),
 );
 

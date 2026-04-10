@@ -1,8 +1,8 @@
-import { ReqWithUser, ResWithUserRoles } from '../app/types';
+import { Request, Response } from 'express';
 import Course from '../models/Course';
 import User from '../models/User';
 
-export const getUserEnrolledCourses = async (req: ReqWithUser, res: ResWithUserRoles) => {
+export const getUserEnrolledCourses = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId).exec();
@@ -10,7 +10,7 @@ export const getUserEnrolledCourses = async (req: ReqWithUser, res: ResWithUserR
       return res.status(404).send('User not found');
     }
     const isAdmin = res.locals.userRoles.includes('Admin');
-    if (!isAdmin && user.id !== req.auth._id) {
+    if (!isAdmin && user.id !== req.auth!._id) {
       return res.status(403).send('Forbidden');
     }
 
@@ -21,7 +21,7 @@ export const getUserEnrolledCourses = async (req: ReqWithUser, res: ResWithUserR
 
     res.status(200).json(enrolledCourses);
   } catch (error) {
-    console.error(error?.message);
+    console.error(error instanceof Error ? error.message : error);
     return res.status(500).send('Server Error.');
   }
 };

@@ -1,13 +1,12 @@
-import { NextFunction, Response } from 'express';
-import { ReqWithUser } from '../app/types';
+import { NextFunction, Request, Response } from 'express';
 import User, { UserRole } from '../models/User';
 import { intersection } from 'lodash';
 
 export const checkRoleMW =
   (...roles: UserRole[]) =>
-  async (req: ReqWithUser, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = await User.findById(req.auth._id).exec();
+      const user = await User.findById(req.auth!._id).exec();
       if (!user) {
         return res.status(401).send('User not found');
       }
