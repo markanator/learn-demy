@@ -1,28 +1,24 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getUserEnrolledCourse, getUserEnrolledCOurses } from '../api/users';
 
 export const useGetUserEnrolledCourses = (userid: string) => {
-  return useQuery(
-    ['userCourses', userid],
-    async () => {
+  return useQuery({
+    queryKey: ['userCourses', userid],
+    queryFn: async () => {
       const { data } = await getUserEnrolledCOurses(userid);
       return data;
     },
-    {
-      enabled: !!userid,
-    },
-  );
+    enabled: !!userid,
+  });
 };
 
 export const useEnrolledCourseDetails = (slug: string) => {
-  return useQuery(
-    ['course', slug],
-    async () => {
+  return useQuery({
+    queryKey: ['course', slug],
+    queryFn: async () => {
       const { data } = await getUserEnrolledCourse(slug);
       return data;
     },
-    {
-      enabled: !!slug,
-    },
-  );
+    enabled: !!slug,
+  });
 };

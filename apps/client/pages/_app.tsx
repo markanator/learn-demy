@@ -5,8 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../styles/index.css';
 import TopNav from '../components/TopNav';
 import AuthProvider from '../context/auth.context';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const client = new QueryClient();
 
