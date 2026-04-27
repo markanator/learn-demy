@@ -12,14 +12,14 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.1.1",
-    "@tanstack/react-query": "^5.97.0",
-    "@tanstack/react-query-devtools": "^5.97.0",
-    "axios": "^1.15.0",
+    "@ant-design/icons": "^6.2.2",
+    "@tanstack/react-query": "^5.100.5",
+    "@tanstack/react-query-devtools": "^5.100.5",
+    "axios": "^1.15.2",
     "bootstrap": "^5.3.8",
     "classnames": "^2.5.1",
     "lodash": "^4.18.1",
-    "next": "16.2.3",
+    "next": "16.2.4",
     "react": "19.2.5",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.10.10",
@@ -29,7 +29,7 @@
     "react-image-file-resizer": "^0.4.8",
     "react-markdown": "^10.1.0",
     "react-player": "^3.4.0",
-    "react-toastify": "^11.0.5",
+    "react-toastify": "^11.1.0",
     "react-use": "^17.6.0"
   },
   "devDependencies": {
