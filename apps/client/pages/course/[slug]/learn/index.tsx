@@ -146,7 +146,7 @@ const EnrolledUserLearnPage = (props: Props) => {
                           controls
                           pip
                           light={course?.image?.Location}
-                          url={lessonInfo?.video?.Location}
+                          src={lessonInfo?.video?.Location}
                         />
                       </Row>
                     )}

@@ -142,7 +142,7 @@ const UpdateLessonModal = ({ isOpen, handleClose, currentLessonToEdit, setCurren
                 {progress > -1 && <ProgressBar className="d-flex justify-content-center" now={progress} />}
                 {!isWorking && currentLessonToEdit?.video && currentLessonToEdit?.video?.Location && (
                   <div className="d-flex justify-content-center">
-                    <ReactPlayer url={currentLessonToEdit?.video?.Location} controls width="410px" height="240px" />
+                    <ReactPlayer src={currentLessonToEdit?.video?.Location} controls width="410px" height="240px" />
                   </div>
                 )}
               </Col>

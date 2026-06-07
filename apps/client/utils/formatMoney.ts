@@ -1,5 +1,5 @@
 export default function formatMoney(amount = 0, currency = 'USD') {
-  const options = {
+  const options: Intl.NumberFormatOptions = {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
