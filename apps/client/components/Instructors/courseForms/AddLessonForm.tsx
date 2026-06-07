@@ -1,3 +1,4 @@
+import type { AxiosProgressEvent } from 'axios';
 import { useAddLessonToCourse, useRemoveVideoFromS3, useUploadVideoToS3 } from '../../../async/rq/lessons';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
@@ -53,9 +54,9 @@ const AddLessonForm = ({ openLessonModal, setOpenLessonModal }: Props) => {
     setNewLessonValues({ ...newLessonValues, [name]: value });
   };
 
-  const onUploadProgress = useCallback(({ loaded, total }) => {
-    // eslint-disable-next-line prefer-const
-    let percent = Math.round((100 * loaded) / total);
+  const onUploadProgress = useCallback(({ loaded, total }: AxiosProgressEvent) => {
+    if (!total) return;
+    const percent = Math.round((100 * loaded) / total);
     setVideoUploadProgress(percent);
   }, []);
 
