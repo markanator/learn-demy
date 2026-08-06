@@ -12,9 +12,9 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1063.0",
-    "@aws-sdk/client-ses": "^3.1063.0",
-    "@aws-sdk/lib-storage": "^3.1063.0",
+    "@aws-sdk/client-s3": "^3.1104.0",
+    "@aws-sdk/client-ses": "^3.1104.0",
+    "@aws-sdk/lib-storage": "^3.1104.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
@@ -24,15 +24,15 @@
     "express": "5.2.1",
     "express-jwt": "^8.5.1",
     "formidable": "^3.5.4",
-    "helmet": "^8.2.0",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "lodash": "^4.18.1",
-    "mongoose": "^9.6.3",
+    "mongoose": "^9.9.1",
     "morgan": "^1.11.0",
-    "nanoid": "^5.1.11",
-    "query-string": "^9.4.0",
+    "nanoid": "^5.1.16",
+    "query-string": "^9.4.1",
     "slugify": "^1.6.9",
-    "stripe": "^22.2.0"
+    "stripe": "^22.4.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -43,11 +43,11 @@
     "@types/express-jwt": "^7.4.4",
     "@types/formidable": "^3.5.1",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/lodash": "^4.17.24",
+    "@types/lodash": "^4.17.25",
     "@types/morgan": "^1.9.10",
-    "@types/node": "25.9.2",
+    "@types/node": "25.9.5",
     "nodemon": "^3.1.14",
-    "ts-jest": "29.4.11",
+    "ts-jest": "29.4.12",
     "ts-node": "10.9.2"
   }
 }
