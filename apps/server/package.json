@@ -29,7 +29,7 @@
     "lodash": "^4.18.1",
     "mongoose": "^9.9.1",
     "morgan": "^1.11.0",
-    "nanoid": "^5.1.16",
+    "nanoid": "^6.0.1",
     "query-string": "^9.4.1",
     "slugify": "^1.6.9",
     "stripe": "^22.4.0"
@@ -45,7 +45,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.25",
     "@types/morgan": "^1.9.10",
-    "@types/node": "25.9.5",
+    "@types/node": "26.1.2",
     "nodemon": "^3.1.14",
     "ts-jest": "29.4.12",
     "ts-node": "10.9.2"
